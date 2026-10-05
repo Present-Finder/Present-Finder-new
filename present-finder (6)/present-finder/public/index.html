@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ro"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Present Finder – găsește cadoul perfect</title>
+<meta name="theme-color" content="#7c4dff">
+<meta name="description" content="Present Finder: găsește cadoul perfect în 30 de secunde, cu variante pentru orice buget.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Present Finder">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* Explicație: tot CSS-ul de mai jos dă aspectul aplicației: culori, butoane, carduri, tema întunecată și versiunea pentru telefon. */
+:root{--bg:#f6f2ff;--bgc:#fff;--ink:#1b1237;--mut:#675f82;--glass:rgba(255,255,255,.72);--line:rgba(60,40,120,.14);--c1:#7c4dff;--c2:#ff4f78;--gold:#ffc23d;--mint:#14b886;--b1:#c9b6ff;--b2:#ffc2d3;--b3:#ffe3a6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0826;--bgc:#1a1240;--ink:#f4f0ff;--mut:#a79fc9;--glass:rgba(34,24,78,.62);--line:rgba(190,170,255,.16);--c1:#8f6bff;--c2:#ff5c82;--mint:#5ef2c0;--b1:#4a2aa8;--b2:#a3224f;--b3:#7a5a10}}
+:root[data-theme="dark"]{--bg:#0e0826;--bgc:#1a1240;--ink:#f4f0ff;--mut:#a79fc9;--glass:rgba(34,24,78,.62);--line:rgba(190,170,255,.16);--c1:#8f6bff;--c2:#ff5c82;--mint:#5ef2c0;--b1:#4a2aa8;--b2:#a3224f;--b3:#7a5a10}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;line-height:1.5;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden}.bg i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.75;width:46vmax;height:46vmax;animation:fl 20s ease-in-out infinite alternate}
+.bg i:nth-child(1){background:var(--b1);top:-14%;left:-12%}.bg i:nth-child(2){background:var(--b2);right:-16%;top:18%;animation-delay:-7s}.bg i:nth-child(3){background:var(--b3);bottom:-24%;left:28%;animation-delay:-13s}
+@keyframes fl{to{transform:translate(6vmax,4vmax) scale(1.14)}}
+main{max-width:980px;margin:0 auto;padding:22px 16px 80px}
+.hero{display:grid;grid-template-columns:1.35fr .65fr;align-items:center;gap:18px;margin:8px 0 26px}@media(max-width:700px){.hero{grid-template-columns:1fr}.gift{max-width:150px!important;order:-1}}
+h1{font-size:clamp(2.3rem,7.5vw,4.5rem);line-height:.98;margin:0 0 14px;font-weight:800;letter-spacing:-.035em}
+.lead{color:var(--mut);font-size:1.12rem;margin:0;max-width:44ch}
+.gift{width:100%;max-width:270px;justify-self:center;filter:drop-shadow(0 24px 40px rgba(124,77,255,.5));animation:bob 4s ease-in-out infinite alternate}@keyframes bob{to{transform:translateY(-12px) rotate(2deg)}}
+.gb{fill:var(--c1)}.gl{fill:var(--c2)}.gg{fill:var(--gold)}.lid{transition:transform .7s cubic-bezier(.3,1.6,.5,1);transform-origin:100px 80px}.gift.open .lid{transform:translate(28px,-50px) rotate(16deg)}
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 24px 60px -24px rgba(90,50,220,.4)}
+.steps{display:flex;gap:8px;margin-bottom:18px}.steps i{flex:1;height:5px;border-radius:9px;background:var(--line);transition:background .4s}.steps i.on{background:linear-gradient(90deg,var(--c1),var(--c2))}
+.pane{display:none}.pane.on{display:block;animation:in .45s ease}@keyframes in{from{opacity:0;transform:translateX(14px)}}
+.pane h2,.rh{margin:0 0 16px;font-size:1.55rem;letter-spacing:-.02em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}@media(max-width:640px){.g2{grid-template-columns:1fr}}.full{grid-column:1/-1}.f{margin-bottom:16px}
+label,.lb{display:block;font-weight:600;margin-bottom:6px}small{display:block;color:var(--mut);font-weight:400}
+input,select,textarea{width:100%;font:inherit;color:inherit;background:var(--bgc);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+input[type=range]{padding:0;accent-color:var(--c2);height:28px}textarea{min-height:64px;resize:vertical}
+:focus-visible{outline:3px solid var(--c1);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{font:inherit;font-size:.95rem;background:var(--bgc);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 15px;cursor:pointer;transition:transform .15s}
+.chip:hover{transform:translateY(-2px)}.chip:active{transform:scale(.94)}.chip[aria-pressed=true]{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border-color:transparent;font-weight:600}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}.bud{font-weight:800;font-size:1.7rem}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:8px}
+.go{font:inherit;font-weight:800;font-size:1.05rem;color:#fff;background:linear-gradient(135deg,var(--c1),var(--c2));border:0;border-radius:14px;padding:14px 26px;cursor:pointer;box-shadow:0 12px 30px -10px var(--c2);transition:transform .15s;flex:1;max-width:300px}.go:hover{transform:translateY(-2px)}
+.btn{font:inherit;font-weight:600;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:9px 16px;cursor:pointer}
+.er{color:var(--c2);font-weight:600;margin:-6px 0 12px}
+.item{background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px;animation:up .6s both;animation-delay:calc(var(--i,0)*80ms)}@keyframes up{from{opacity:0;transform:translateY(18px)}}
+.big{border:2px solid transparent;background:linear-gradient(var(--bgc),var(--bgc)) padding-box,linear-gradient(135deg,var(--c1),var(--c2),var(--gold)) border-box;padding:22px;margin-top:14px}.big h3{font-size:1.5rem}
+.tag{justify-self:start;background:linear-gradient(135deg,var(--gold),var(--c2));color:#1b1237;font-weight:800;font-size:.8rem;padding:3px 13px;border-radius:99px}
+.top{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}#sv .top{display:flex;justify-content:space-between}
+.em{font-size:1.9rem;width:56px;height:56px;display:grid;place-items:center;border-radius:16px;background:var(--bg)}
+.item h3{margin:0;font-size:1.12rem;line-height:1.25}.why{color:var(--mut);margin:3px 0 0;font-size:.92rem}.pr{font-weight:800;font-size:1.1rem}.pct{color:var(--mut);font-size:.9rem}
+.ring{width:56px;height:56px;border-radius:50%;background:conic-gradient(var(--mint) calc(var(--v)*1%),var(--line) 0);display:grid;place-items:center}.ring b{width:44px;height:44px;border-radius:50%;background:var(--bgc);display:grid;place-items:center;font-size:.8rem}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}@media(max-width:640px){.res{grid-template-columns:1fr}.top{grid-template-columns:auto 1fr}.ring{grid-column:2;justify-self:start}}
+.links{display:flex;gap:8px;flex-wrap:wrap}.links a{color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:5px 14px;text-decoration:none;font-weight:600;font-size:.88rem;background:var(--bgc)}.links a:hover{background:var(--ink);color:var(--bg)}
+.ico{font:inherit;background:var(--bgc);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:4px 11px;cursor:pointer;font-size:.88rem}.ico[aria-pressed=true]{border-color:var(--c2);color:var(--c2);font-weight:700}
+.empty{border:1px dashed var(--line);border-radius:16px;padding:18px;margin-top:14px}
+.msg{background:var(--glass);border-left:4px solid var(--c2);padding:14px 16px;border-radius:12px}
+.sk div{height:92px;border-radius:20px;margin-top:14px;background:linear-gradient(90deg,var(--glass),var(--line),var(--glass));background-size:200% 100%;animation:sh 1.1s infinite}@keyframes sh{to{background-position:-200% 0}}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:9}section{margin-top:30px}footer{margin-top:36px;color:var(--mut);font-size:.85rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;display:flex;justify-content:space-between;align-items:center;padding:9px 14px;margin:0 0 6px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:16px;font-weight:800;font-size:1.05rem}
+.seg{display:flex;background:var(--bg);border-radius:12px;padding:4px;gap:4px}.seg button{flex:1;font:inherit;font-size:.88rem;font-weight:600;color:var(--mut);background:transparent;border:0;border-radius:9px;padding:7px 4px;cursor:pointer}.seg button[aria-pressed=true]{background:var(--bgc);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.vb{display:grid;gap:10px}.fb{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 0}.fb select{width:auto;padding:7px 12px}
+.sum{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}.pill{background:var(--bgc);border:1px solid var(--line);border-radius:99px;padding:3px 12px;font-size:.88rem}.chip.sm{padding:5px 12px;font-size:.88rem}
+.chk{display:flex;align-items:center;gap:8px;margin:0;font-weight:600;cursor:pointer}.chk input{width:auto}@media(max-width:520px){#vol{display:none}}
+.dv{margin:0;font-size:.9rem;color:var(--mut);background:var(--bg);border-radius:12px;padding:10px 12px;line-height:1.45}.dv b{color:var(--ink)}.dv b.g{color:var(--mint)}.dv b.r{color:var(--c2)}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;background:var(--mint)}.dot.mid{background:var(--gold)}
+
+/* ===== optimizări mobile / aplicație ===== */
+html{-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+body{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none;min-height:100dvh;
+ padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+input,textarea,select{-webkit-user-select:text;user-select:text}
+.msg{-webkit-user-select:text;user-select:text}
+.btn,.chip,.ico,.go,.seg button{min-height:44px}
+.chip.sm{min-height:38px}
+.links a{min-height:40px;display:inline-flex;align-items:center}
+@media(max-width:520px){main{padding:14px 12px 96px}.glass{padding:18px}.nav{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);z-index:5}.go{max-width:none}}
+#ins{display:none;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border:0;font-weight:800}
+.ios-tip{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:20;background:var(--bgc);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 18px 50px -12px rgba(0,0,0,.5);font-size:.95rem}
+.ios-tip button{float:right;margin-left:10px}
+.offline{position:fixed;top:calc(env(safe-area-inset-top,0px) + 6px);left:50%;transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--bg);padding:6px 14px;border-radius:99px;font-size:.85rem;font-weight:600}
+
+/* ===== INTERFAȚĂ SPECIALĂ DE TELEFON (ecrane <= 700px) ===== */
+.tabs,#ph{display:none}
+@media(max-width:700px){
+ body{padding-bottom:0}
+ main{padding:10px 12px calc(110px + env(safe-area-inset-bottom,0px))}
+ .bar{border-radius:0 0 18px 18px;margin:0 -12px 10px;padding:10px 16px}
+ #mu{font-size:0;padding:0;width:44px}#mu::before{content:"♪";font-size:1.15rem}#mu[aria-pressed=true]::before{content:"⏸";font-size:1.05rem}
+ .hero{margin:0 0 14px;gap:8px}h1{font-size:1.85rem}.lead{font-size:.98rem}.gift{max-width:96px!important}
+ footer{display:none}
+ .glass{border-radius:22px;padding:18px}
+ .pane h2{font-size:1.35rem}
+ .nav{bottom:calc(env(safe-area-inset-bottom,0px) + 84px)!important}
+ body[data-tab=search] #out,body[data-tab=search] #sv,
+ body[data-tab=ideas] #f,body[data-tab=ideas] #sv,body[data-tab=ideas] .hero,
+ body[data-tab=saved] #f,body[data-tab=saved] #out,body[data-tab=saved] .hero{display:none!important}
+ /* carduri care se derulează lateral (swipe) */
+ .res{display:flex;grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin:14px -12px 0;padding:4px 12px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+ .res::-webkit-scrollbar{display:none}
+ .res .item{flex:0 0 88%;scroll-snap-align:center}
+ #sv .res{flex-direction:column;overflow:visible;margin:14px 0 0;padding:0}#sv .res .item{flex:none}
+ .big{margin-top:10px}
+ .fb{flex-wrap:nowrap;overflow-x:auto;margin:12px -12px 0;padding:2px 12px;scrollbar-width:none}.fb::-webkit-scrollbar{display:none}.fb .chip,.fb select{flex:none}
+ /* bara de jos, ca într-o aplicație nativă */
+ .tabs{display:flex;position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);z-index:8;background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:24px;padding:6px;box-shadow:0 14px 40px -10px rgba(60,30,160,.5)}
+ .tabs button{flex:1;position:relative;font:inherit;font-size:.78rem;font-weight:600;color:var(--mut);background:transparent;border:0;border-radius:18px;padding:7px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer}
+ .tabs button span{font-size:1.35rem;line-height:1.2}
+ .tabs button[aria-current=page]{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff}
+ .tabs b{position:absolute;top:2px;right:calc(50% - 26px);min-width:18px;height:18px;border-radius:9px;background:var(--gold);color:#1b1237;font-size:.72rem;display:grid;place-items:center;padding:0 4px}
+ .tabs b:empty{display:none}
+ #ph{display:block;text-align:center;padding:48px 12px}#ph[hidden]{display:none}#ph .e{font-size:3.2rem}#ph p{color:var(--mut)}
+ .ios-tip{bottom:calc(env(safe-area-inset-bottom,0px) + 88px)}
+}
+
+/* ===== verificare linkuri + social ===== */
+.lk{font-style:normal;font-weight:800;margin-right:6px}.lk.ok{color:var(--mint)}.lk.em{color:var(--gold)}.lk.no{color:var(--c2)}.lk.w{opacity:.5}
+a.dead{text-decoration:line-through;opacity:.6}
+@media(max-width:700px){body[data-tab=ideas] .sites,body[data-tab=saved] .sites{display:none}}
+
+/* ===== experiențe lângă tine ===== */
+#xp h2{margin-top:0}#xp small{display:block;color:var(--mut);margin:4px 0 10px}
+.xc{font:inherit;font-weight:600;font-size:.92rem;color:var(--ink);background:var(--glass);border:1px solid var(--line);border-radius:99px;padding:8px 14px;margin:0 6px 8px 0;cursor:pointer;min-height:40px}
+.xc[aria-pressed=true]{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border-color:transparent}
+.xrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+#xcity{flex:1;min-width:150px}
+.xi{border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:10px;background:var(--glass)}
+.xi b{font-size:1.05rem}.xm{color:var(--mut);font-size:.92rem;margin:2px 0}.xr{font-size:.92rem;min-height:1.2em}
+.xl{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.xl a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.9rem;border:1px solid var(--line);border-radius:99px;padding:8px 12px;min-height:40px;display:inline-flex;align-items:center}
+#xs{color:var(--mut);margin:8px 0 0}
+@media(max-width:700px){
+ body[data-tab=search] #xp,body[data-tab=ideas] #xp,body[data-tab=saved] #xp{display:none!important}
+ body[data-tab=xp] #f,body[data-tab=xp] #out,body[data-tab=xp] #sv,body[data-tab=xp] .hero,body[data-tab=xp] .sites{display:none!important}
+ .tabs button{font-size:.7rem}
+}
+/* ===== INTERFAȚĂ DIFERITĂ: CALCULATOR (>= 701px) ȘI TELEFON (<= 700px) ===== */
+.xmore{display:none}
+/* calculator: experiențele apar în grilă, pe mai multe coloane */
+@media(min-width:701px){#xres{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px;align-items:start}#xres .xi{margin:0}}
+/* telefon: ecran curat, un singur lucru pe ecran, butoane mari */
+@media(max-width:700px){
+ .hero .gift,#gx,.hero .lead{display:none}.hero{margin-bottom:6px}h1{font-size:1.6rem}
+ #vol{display:none}#ins{font-size:0;padding:0;width:44px}#ins::before{content:"⬇";font-size:1.1rem}#th{font-size:0;padding:0;width:44px}#th::before{content:"🌓";font-size:1.1rem}
+ .g2{grid-template-columns:1fr!important}textarea{min-height:64px}
+ #xp{padding:16px}#xp small{display:none}#xp h2{font-size:1.3rem}
+ #xloc,#xcity,#xcb{flex:1 1 100%}#xall,#xnone{flex:1}
+ #xcat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(3,auto);gap:8px;overflow-x:auto;margin:6px -16px;padding:2px 16px;scrollbar-width:none}#xcat::-webkit-scrollbar{display:none}
+ #xcat .xc{margin:0;white-space:nowrap}
+ #xgo{width:100%;margin-top:12px}
+ .xmx{display:none}.xi.open .xmx{display:block}
+ .xmore{display:block;width:100%;margin-top:8px;padding:10px;font:inherit;font-weight:600;color:var(--ink);background:transparent;border:1px dashed var(--line);border-radius:12px;cursor:pointer}
+ .xl{display:grid;grid-template-columns:1fr 1fr}.xl a{justify-content:center;text-align:center}
+}
+body>.skiptranslate,.goog-te-banner-frame,#goog-gt-tt{display:none!important}body{top:0!important}.goog-text-highlight{background:none!important;box-shadow:none!important}
+select option,select optgroup{background-color:var(--bgc);color:var(--ink)}
+</style></head><body><div class="bg" aria-hidden="true"><i></i><i></i><i></i></div><canvas id="cf" aria-hidden="true"></canvas>
+<main>
+<!-- Explicație: bara de sus (nume, butonul de muzică, volum, instalare, temă) și taburile de pe telefon. -->
+<nav class="bar"><span>🎁 Present Finder</span><span class="row" style="gap:8px;justify-content:flex-end"><button class="btn" id="mu" type="button" aria-pressed="false">♪ Pornește muzica</button><input id="vol" type="range" min="0" max="1" step=".05" value=".6" aria-label="Volum muzică" style="width:80px"><button class="btn" id="ins" type="button">⬇ Instalează</button><button class="btn" id="th" type="button">Temă</button><select id="ctry" class="btn" translate="no" aria-label="Țara / Country" title="Țara / Country" style="padding:8px 6px;max-width:130px"><option value="ro">România</option><option value="us">United States</option><option value="uk">United Kingdom</option><option value="es">España</option><option value="fr">France</option><option value="in">भारत</option><option value="cn">中国</option></select></span></nav>
+<header class="hero"><div><h1>Cadoul perfect, găsit în 30 de secunde.</h1><p class="lead">Spune-ne cine e persoana, ce îi place și cât vrei să cheltui. Primești idei cu variante economice, echilibrate sau premium, de la 0 RON până la fără limită, și te ducem direct în magazine.</p></div>
+<svg id="gx" class="gift" viewBox="0 0 200 200" aria-hidden="true"><ellipse cx="100" cy="186" rx="64" ry="8" fill="rgba(0,0,0,.18)"/><rect class="gb" x="40" y="96" width="120" height="84" rx="8"/><rect class="gg" x="92" y="96" width="16" height="84"/><g class="lid"><rect class="gl" x="28" y="62" width="144" height="36" rx="8"/><rect class="gg" x="92" y="62" width="16" height="36"/><path class="gg" d="M100 62C78 26 48 38 64 56c8 8 26 6 36 6zM100 62c22-36 52-24 36-6-8 8-26 6-36 6z"/></g></svg></header>
+<form id="f" class="glass" novalidate>
+<div class="steps" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+<div class="pane on"><h2>Despre cine e cadoul</h2><div class="f"><span class="lb">Pornește rapid <small>Alege un profil, apoi îl ajustezi</small></span><div class="chips" id="ps"></div></div><div class="g2">
+<div class="f"><label for="nume">Numele lui/ei <small>Opțional</small></label><input id="nume" placeholder="ex: Andrei" autocomplete="off"></div>
+<div class="f"><label for="varsta">Vârsta</label><input id="varsta" type="number" min="1" max="100" placeholder="22"></div>
+<div class="f"><label for="rel">Cine îți este</label><select id="rel"><optgroup label="Aproape de tine"><option value="prieten">Prieten / prietenă</option><option value="partener">Partener / parteneră</option></optgroup><optgroup label="Familie"><option value="parinte">Părinte (mamă sau tată)</option><option value="bunic">Bunic / bunică</option><option value="frate">Frate / soră</option><option value="copil">Copil (fiu sau fiică)</option><option value="unchi">Unchi / mătușă</option><option value="var">Văr / verișoară</option></optgroup><optgroup label="Serviciu și vecinătate"><option value="coleg">Coleg / colegă</option><option value="sef">Șef / șefă</option><option value="profesor">Profesor / profesoară</option><option value="vecin">Vecin / vecină</option></optgroup></select></div>
+<div class="f"><label for="oc">Ocazia</label><select id="oc"><optgroup label="Aniversări"><option value="zi">Zi de naștere</option><option value="nume">Zi de nume</option><option value="aniv">Aniversare de cuplu</option></optgroup><optgroup label="Sărbători"><option value="craciun">Crăciun</option><option value="paste">Paște</option><option value="martisor">1 Martie (mărțișor)</option><option value="martie8">8 Martie</option><option value="valentine">Ziua Îndrăgostiților</option><option value="mama">Ziua Mamei</option><option value="tata">Ziua Tatălui</option></optgroup><optgroup label="Momente din viață"><option value="absolvire">Absolvire</option><option value="job">Job nou sau promovare</option><option value="pensie">Pensionare</option><option value="logodna">Logodnă</option><option value="nunta">Nuntă</option><option value="bebe">Naștere de bebeluș</option><option value="botez">Botez</option><option value="casa">Casă nouă</option></optgroup><optgroup label="Gesturi"><option value="multumire">Mulțumire</option><option value="sanatate">Însănătoșire</option><option value="iertare">Împăcare</option><option value="fara">Fără ocazie anume</option></optgroup></select></div><div class="f"><label for="dl">Când ai nevoie de cadou? <small>Opțional: îți spunem dacă ajunge la timp</small></label><input id="dl" type="date"><p class="er" id="erd" hidden>Data nu poate fi în trecut, am pus data de azi.</p></div></div>
+<p class="er" id="er" hidden>Scrie vârsta, ca să potrivim cadoul.</p></div>
+<!-- Explicație: pasul 2 al formularului: hobby-uri, cadouri care i-au plăcut și ce să evităm. Pasul 1 (vârstă, relație, ocazie, dată) e chiar deasupra. -->
+<div class="pane"><h2>Ce îi place?</h2><div class="f"><span class="lb">Hobby-uri și pasiuni <small>Apasă pe cele care i se potrivesc sau adaugă-le pe ale tale</small></span><div class="chips" id="hc"></div><div class="row" style="margin-top:10px;flex-wrap:nowrap"><input id="hx" placeholder="Alt hobby? ex: pescuit, dans, pictură" autocomplete="off" aria-label="Adaugă un hobby"><button type="button" class="btn" id="hadd">Adaugă</button></div>
+</div>
+<div class="g2"><div class="f"><label for="past">Cadouri care i-au plăcut</label><textarea id="past" placeholder="o carte SF, căști, un voucher"></textarea></div>
+<div class="f"><label for="no">Ce să evităm <small>Are deja sau nu îi place</small></label><textarea id="no" placeholder="parfum, jocuri de societate"></textarea></div></div></div>
+<!-- Explicație: pasul 3: stilul cadoului, tipul de produse (noi, reducere, second-hand) și bugetul. -->
+<div class="pane"><h2>Stil și buget</h2><div class="f"><span class="lb">Ce fel de cadou preferi? <small>Poți alege mai multe</small></span><div class="chips" id="sc"></div></div>
+<div class="f"><span class="lb">Ce fel de produse cauți? <small>Alege unde să te ducem</small></span><div class="chips" id="cd"></div></div><div class="f"><label for="bud">Buget maxim (<span id="bcur">RON</span>)</label><div class="row" style="justify-content:flex-start;gap:16px"><input id="bud" type="number" inputmode="numeric" min="0" step="1" value="200" style="max-width:200px;font-size:1.4rem;font-weight:800"><label class="chk"><input type="checkbox" id="inf">Fără limită</label></div><div class="chips" id="bq" style="margin-top:10px"></div><p class="er" id="er2" hidden style="margin-top:10px">Scrie bugetul sau bifează „Fără limită”.</p></div></div>
+<div class="nav"><button type="button" class="btn" id="bk" style="visibility:hidden">Înapoi</button><button type="button" class="go" id="nx">Continuă</button></div>
+</form>
+<!-- Explicație: aici apar rezultatele (cardurile cu cadouri); mai jos sunt cadourile salvate și site-urile magazinelor. -->
+<section id="out" aria-live="polite" hidden></section>
+<section id="sv" hidden></section>
+<section class="sites"><h2 class="rh">Site-urile magazinelor</h2><div class="links" id="sit"></div></section>
+<footer>Sugestiile sunt orientative; prețurile reale variază. Unele linkuri pot deveni linkuri de afiliere.</footer>
+<section class="glass" id="xp" aria-labelledby="xph"><h2 id="xph">📍 Experiențe lângă tine</h2>
+<small>Un cadou-experiență: parc acvatic, parașutism, karting… Locația se folosește doar în browser și nu se salvează.</small>
+<div class="xrow"><button type="button" class="go" id="xloc">📍 Permite localizarea</button><input id="xcity" type="text" placeholder="sau scrie orașul (ex. Cluj-Napoca)" aria-label="Oraș"><button type="button" class="btn" id="xcb">Caută oraș</button></div>
+<p id="xpos" class="pct"></p>
+<b>Cât de departe mergi?</b><div class="xrow"><input id="xr" type="range" min="5" max="200" step="5" value="50" aria-label="Distanța maximă în kilometri" style="flex:1;min-width:160px"><output id="xrv" style="font-weight:800;min-width:70px;text-align:right">50 km</output></div><div class="xrow" id="xrad"><button type="button" class="xc" data-r="25" aria-pressed="false">25 km</button><button type="button" class="xc" data-r="50" aria-pressed="true">50 km</button><button type="button" class="xc" data-r="100" aria-pressed="false">100 km</button><button type="button" class="xc" data-r="150" aria-pressed="false">150 km</button><button type="button" class="xc" data-r="200" aria-pressed="false">200 km</button></div>
+<b>Ce fel de experiență?</b><div class="xrow"><button type="button" class="btn" id="xall">Selectează tot</button><button type="button" class="btn" id="xnone">Șterge selecția</button></div><div class="xrow" id="xcat"></div>
+<b>Altă experiență? Scrie ce cauți</b><div class="xrow"><input id="xcu" type="text" placeholder="ex: planetariu, VR, tir, ceramică" aria-label="Experiență personalizată" style="flex:1;min-width:180px"><button type="button" class="btn" id="xcua">Adaugă</button></div>
+<button type="button" class="go" id="xgo">🔎 Scanează zona</button><p id="xs" aria-live="polite"></p><div id="xres"></div></section>
+</main>
+<div id="ph" hidden><div class="e">🎁</div><h2></h2><p></p><button class="go" type="button" id="phb">Caută un cadou</button></div>
+<nav class="tabs" aria-label="Navigare"><button type="button" data-t="search"><span>🔎</span>Caută</button><button type="button" data-t="ideas"><span>🎁</span>Idei</button><button type="button" data-t="saved"><span>❤️</span>Salvate<b id="sb"></b></button><button type="button" data-t="xp"><span>📍</span>Experiențe</button></nav>
+<script>
+var CC="RON",FX=1; // moneda țării alese (cod) și cursul față de 1 RON
+function nice(x){if(x<10)return Math.round(x);var p=Math.pow(10,Math.floor(Math.log10(x))-1);return Math.round(x/p)*p}
+function cv(n){return CC=="RON"?n:nice(n*FX)} // RON -> moneda țării
+// BLOC 1, catalogul: textul R are un cadou pe rând, câmpurile fiind separate prin |. Aici adaugi cadouri noi.
+// nume|tag-uri|pmin|pmax|vmin|vmax|categorie|stil(p=practic d=distractiv s=sentimental e=experiență l=lux)|căutare
+var R="Căști wireless cu anulare de zgomot|muzica casti audio calatorii podcast tehnologie birou|200|900|14|70|tech|pl|casti wireless noise cancelling\n"+
+"Boxă Bluetooth portabilă|muzica petreceri plaja drumetii audio|100|500|12|60|tech|pd|boxa bluetooth portabila\n"+
+"Tastatură / mouse gaming|gaming pc esports jocuri calculator|120|500|10|45|tech|pd|tastatura mouse gaming\n"+
+"Card cadou Steam / PlayStation|gaming jocuri consola|50|300|10|45|gaming|d|card steam playstation\n"+
+"Joc de societate (Catan, Dixit)|jocuri societate prieteni petreceri strategie|90|250|10|70|jocuri|d|joc societate catan dixit\n"+
+"Puzzle 1000 piese|puzzle relaxare acasa arta|40|150|8|90|jocuri|ds|puzzle 1000 piese\n"+
+"Set LEGO Technic / Icons|lego constructii colectie masini arhitectura|100|900|8|60|jocuri|dl|set lego technic\n"+
+"Roman bestseller|citit carti literatura sf fantasy|30|100|10|90|carti|ps|carte bestseller\n"+
+"E-reader (Kindle)|citit carti calatorii tehnologie|400|900|12|80|carti|pl|kindle ebook reader\n"+
+"Cuțit de bucătar profesional|gatit bucatarie mancare|100|500|16|80|casa|pl|cutit bucatarie profesional\n"+
+"Set cafea de specialitate|cafea espresso bautura dimineata|60|300|18|80|casa|p|set cafea specialitate v60\n"+
+"Espressor automat|cafea espresso bucatarie|400|2000|20|80|casa|pl|espressor automat\n"+
+"Set ceai premium|ceai relaxare wellness acasa|50|180|16|90|casa|ps|set ceai premium\n"+
+"Ghete / minge de fotbal|fotbal sport echipa minge|80|500|8|45|sport|p|ghete fotbal minge\n"+
+"Tricou echipă favorită|fotbal baschet sport suporter|100|350|8|60|sport|ds|tricou echipa fotbal\n"+
+"Brățară fitness / smartwatch|alergare fitness sport sanatate tehnologie ciclism|150|1200|14|70|sport|pl|smartwatch fitness\n"+
+"Gantere reglabile + benzi|fitness sala antrenament sanatate|60|350|16|60|sport|p|gantere reglabile benzi\n"+
+"Saltea de yoga + set|yoga relaxare wellness fitness|60|250|16|70|sport|p|saltea yoga\n"+
+"Rucsac de drumeție|drumetii munte calatorii camping aventura natura|150|600|14|70|outdoor|p|rucsac drumetie 30l\n"+
+"Hamac / cort ușor|camping natura munte aventura|120|700|16|60|outdoor|pd|hamac camping\n"+
+"Termos izolat premium|drumetii cafea ceai munte birou|60|200|16|80|outdoor|p|termos inox\n"+
+"Cameră foto instant Instax|fotografie poze amintiri calatorii prieteni|300|700|12|50|foto|dsl|instax mini\n"+
+"Trepied + lumină telefon|fotografie video youtube tiktok creator content|60|250|12|45|foto|p|trepied lumina inel\n"+
+"Set pictură / schiță|desen pictura arta creativ|60|300|8|80|arta|ps|set pictura acrilice\n"+
+"Tabletă grafică|desen digital arta design grafica|250|900|12|50|arta|pl|tableta grafica wacom\n"+
+"Ukulele|muzica chitara instrument creativ|150|500|10|60|muzica|d|ukulele\n"+
+"Pickup + vinyl|muzica vinyl colectie retro|150|800|16|70|muzica|ls|pickup vinyl\n"+
+"Bilete la concert|muzica concert evenimente prieteni|100|600|14|70|exp|esl|bilete concert\n"+
+"Voucher adrenalină (karting, escape room)|aventura sport prieteni distractie|100|500|14|60|exp|ed|voucher karting escape room\n"+
+"Voucher spa / masaj|relaxare wellness stres spa|150|500|18|80|exp|el|voucher spa masaj\n"+
+"Cină romantică / degustare|mancare gatit vin romantic|150|600|18|80|exp|esl|voucher cina degustare\n"+
+"Plantă + ghiveci ceramic|plante gradinarit natura casa decor|40|200|16|90|casa|ps|planta apartament ghiveci\n"+
+"Kit ierburi aromatice|gradinarit plante gatit natura|50|200|10|80|casa|pd|kit ierburi aromatice\n"+
+"Veioză design|casa decor relaxare citit camera|60|300|14|80|casa|p|veioza design\n"+
+"Parfum|parfum stil moda ingrijire|150|600|18|80|stil|l|parfum\n"+
+"Portofel din piele|moda stil accesorii birou|100|500|18|70|stil|pl|portofel piele\n"+
+"Set îngrijire personală|ingrijire barba relaxare wellness|60|250|16|70|stil|p|set ingrijire barba\n"+
+"Power bank + organizator|tehnologie calatorii birou student|60|250|12|60|tech|p|power bank 20000\n"+
+"Stilou + caiet premium|scris birou student jurnal creativ|50|250|12|70|birou|ps|stilou caiet premium\n"+
+"Curs online (card cadou)|invatat curs programare design limbi cariera|60|300|16|70|exp|pe|card cadou curs online\n"+
+"Proiector mini|filme seriale gaming tehnologie acasa|250|900|14|60|tech|dl|proiector mini\n"+
+"Mașină de popcorn|filme mancare prieteni acasa desert|100|350|12|70|casa|d|masina popcorn\n"+
+"Accesorii bicicletă|ciclism bicicleta sport oras|80|400|10|70|sport|p|casca bicicleta lumini\n"+
+"Tablă de șah premium|sah strategie jocuri minte|60|400|10|90|jocuri|pl|set sah lemn\n"+
+"Tablou / canvas personalizat|amintiri prieteni foto personalizat|40|200|8|90|pers|s|tablou canvas personalizat\n"+
+"Cană + album foto personalizat|amintiri foto personalizat prieteni|40|150|8|90|pers|s|album foto personalizat\n"+
+"Cadou cu mesaj video de la prieteni|amintiri prieteni personalizat|30|120|10|90|pers|s|cadou personalizat\n"+
+"Aparat de gătit sous-vide / air fryer|gatit bucatarie mancare|200|700|20|70|casa|p|air fryer\n"+
+"Set bar / cocktailuri|bautura petreceri prieteni gatit vin|80|300|21|70|casa|dp|set cocktailuri shaker\n"+
+"Cască / set de călărie sau patine|patinaj sport aventura|100|500|10|45|sport|p|patine role\nScrisoare de mână cu 10 amintiri comune|amintiri scris romantic prieteni sentimental|0|0|8|99|pers|s|\nPlaylist făcut special pentru el/ea|muzica amintiri petreceri audio|0|0|10|99|muzica|s|\nCină gătită de tine acasă|gatit mancare romantic prieteni bucatarie|0|30|16|99|exp|se|\nO zi surpriză plănuită de tine|aventura calatorii prieteni experienta distractie|0|50|12|99|exp|esd|\nColaj foto făcut de mână|foto amintiri personalizat creativ arta|0|40|8|99|pers|s|\nZi de ajutor (curățenie, cumpărături, mutat)|casa ajutor practic|0|0|16|99|casa|p|\nLaptop performant|tehnologie programare pc gaming birou student design|2500|12000|16|65|tech|pl|laptop\nCameră foto mirrorless|fotografie foto calatorii video creator|3000|15000|16|60|foto|l|camera foto mirrorless\nDronă cu cameră 4K|fotografie video aventura tehnologie calatorii|1500|8000|16|60|tech|dl|drona 4k\nBicicletă electrică|ciclism bicicleta sport oras aventura|4000|15000|18|65|sport|pl|bicicleta electrica\nCeas mecanic de lux|moda stil accesorii colectie|1500|20000|20|80|stil|l|ceas mecanic automatic\nWeekend de lux pentru doi (hotel + spa)|calatorii relaxare romantic wellness spa|1500|8000|20|80|exp|esl|weekend hotel spa\nVacanță în doi (zbor + cazare)|calatorii aventura romantic mancare|3000|20000|20|80|exp|el|vacanta city break\nSistem audio hi-fi|muzica audio vinyl colectie|2000|10000|18|80|muzica|l|boxe hi-fi\nTabletă de top (iPad / Galaxy Tab)|desen digital arta citit filme tehnologie student|2000|6000|12|70|tech|pl|tableta\nConsolă PS5 / Xbox|gaming jocuri consola filme|2000|3500|10|45|gaming|d|consola ps5";
+R+="\n"+"Lansetă telescopică + mulinetă|pescuit lanseta natura aventura|120|600|12|80|outdoor|p|set lanseta mulineta\nScaun pliabil pentru pescar|pescuit camping natura relaxare|80|350|16|80|outdoor|p|scaun pescar pliabil\nSet momeli, năluci și cârlige|pescuit natura aventura|40|200|8|80|outdoor|pd|set nalucii carlige pescuit\nGeantă / cutie accesorii pescuit|pescuit organizare natura|40|220|12|80|outdoor|p|geanta pescuit accesorii\nUmbrelă / cort de pescuit|pescuit camping natura|150|700|16|70|outdoor|p|umbrela pescuit\nVestă / geacă impermeabilă|pescuit drumetii munte natura|120|600|14|80|outdoor|p|geaca impermeabila\nLanternă frontală|camping drumetii pescuit aventura|40|200|10|80|outdoor|p|lanterna frontala\nSac de dormit|camping drumetii munte aventura|100|500|10|70|outdoor|p|sac de dormit\nBețe de trekking|drumetii munte aventura fitness|80|350|14|80|outdoor|p|bete trekking\nFrigider portabil|camping calatorii plaja natura petreceri|120|600|18|80|outdoor|p|frigider portabil auto\nSaltea autogonflabilă|camping aventura natura|80|400|12|70|outdoor|p|saltea autogonflabila camping\nSet cană + pahare inox camping|camping drumetii cafea natura|40|180|14|80|outdoor|p|set camping inox\nCameră video de acțiune|aventura calatorii sport video youtube|250|1500|12|50|foto|dp|camera video actiune\nObiectiv / lentile pentru telefon|fotografie calatorii creator content|40|250|12|50|foto|p|lentile telefon foto\nImprimantă foto portabilă|fotografie amintiri prieteni creativ|250|600|12|60|foto|ds|imprimanta foto portabila\nRamă foto digitală|fotografie amintiri familie casa|200|700|16|90|foto|ps|rama foto digitala\nController / gamepad|gaming jocuri consola pc|150|700|10|45|gaming|d|controller gamepad\nCască gaming|gaming jocuri pc esports muzica|120|700|10|45|gaming|pd|casti gaming\nMousepad XXL|gaming pc birou calculator|40|150|10|50|gaming|p|mousepad xxl\nScaun gaming / ergonomic|gaming birou pc programare|500|2000|14|60|gaming|pl|scaun gaming ergonomic\nCard Nintendo eShop / Game Pass|gaming jocuri consola|50|300|10|45|gaming|d|card nintendo eshop game pass\nÎncărcător wireless / stație 3 în 1|tehnologie birou calatorii|80|350|12|70|tech|p|incarcator wireless 3 in 1\nTracker pentru chei și bagaje|tehnologie calatorii organizare|80|200|12|80|tech|p|tracker chei bluetooth\nWebcam + microfon|tehnologie birou youtube programare creator|150|600|14|60|tech|p|webcam microfon streaming\nHub USB-C / dock laptop|tehnologie birou programare calculator|100|500|16|60|tech|p|hub usb c dock\nCasă inteligentă: becuri și prize smart|tehnologie casa gadgeturi|80|350|18|70|tech|pd|becuri smart priza smart\nCăști in-ear sport|muzica alergare fitness ciclism sport|100|600|12|60|tech|p|casti sport in ear\nRolă de masaj / foam roller|fitness sala alergare sport sanatate|50|200|16|60|sport|p|foam roller masaj\nPistol de masaj muscular|fitness sala alergare sanatate relaxare|150|600|18|60|sport|pl|pistol masaj muscular\nSticlă sport / shaker|fitness sala sport alergare|40|150|12|60|sport|p|sticla sport shaker\nÎncălțăminte de alergare|alergare fitness sport sanatate|250|700|14|60|sport|p|pantofi alergare\nMănuși de box + sac|box sport fitness|120|500|12|50|sport|dp|manusi box sac\nRachetă de tenis / set badminton|tenis sport prieteni natura|80|450|8|60|sport|pd|racheta tenis badminton\nMinge de baschet|baschet sport echipa|70|250|8|50|sport|p|minge baschet\nOchelari de înot + costum|inot sport fitness vara|60|250|8|60|sport|p|ochelari inot costum\nTrotinetă electrică|sport oras aventura calatorii|900|2500|14|55|sport|dl|trotineta electrica\nCască + lumini pentru bicicletă|ciclism bicicleta sport oras|60|300|12|70|sport|p|casca bicicleta lumini\nCurea / bandă elastică de rezistență|fitness sala yoga antrenament|40|150|14|60|sport|p|benzi elastice rezistenta\nLumânări parfumate premium|casa decor relaxare romantic|40|200|16|90|casa|ps|lumanari parfumate premium\nDifuzor de arome + uleiuri|casa relaxare wellness yoga|60|250|16|90|casa|p|difuzor aromaterapie\nPătură pufoasă|casa relaxare filme citit seriale|60|250|8|90|casa|ps|patura pufoasa\nSet de farfurii / pahare design|casa gatit decor mancare|80|400|20|90|casa|p|set farfurii design\nMașină de făcut paste|gatit bucatarie mancare|150|500|18|80|casa|dp|masina paste\nBlender / storcător|gatit bucatarie sanatate fitness|120|600|18|80|casa|p|blender smoothie\nSet de grătar|gatit mancare prieteni petreceri natura|100|450|20|80|casa|pd|set gratar accesorii\nSet pentru vin: decantor + cadouri|vin bautura gatit romantic|80|350|21|80|casa|pl|decantor vin set\nPernă ortopedică / cadou pentru somn|relaxare sanatate casa|80|300|18|90|casa|p|perna ortopedica\nCutie de bijuterii / organizator|moda stil casa organizare|50|250|14|80|casa|p|cutie bijuterii\nMașină de cafea cu capsule|cafea espresso bucatarie dimineata|200|700|18|80|casa|p|espressor capsule\nCană termică / termos de birou|cafea ceai birou calatorii|40|150|14|80|casa|p|cana termica\nOchelari de soare|moda stil vara calatorii|100|600|14|80|stil|pl|ochelari de soare\nColier / cercei din argint|bijuterii moda stil romantic|100|500|14|80|stil|sl|colier argint cercei\nCeas de mână clasic|moda stil birou|200|1500|16|80|stil|pl|ceas de mana\nRucsac / geantă de oraș|moda stil calatorii birou student|120|500|14|70|stil|p|rucsac oras\nSet cosmetice / machiaj|machiaj ingrijire stil moda|100|400|14|70|stil|pl|set machiaj cadou\nFular + mănuși din lână|moda stil iarna|60|250|10|90|stil|p|fular manusi lana\nPapuci de casă premium|casa relaxare confort|50|200|10|90|stil|p|papuci de casa\nCurea din piele|moda stil birou|80|300|16|70|stil|p|curea piele\nUmbrelă rezistentă la vânt|stil oras practic|50|150|12|90|stil|p|umbrela rezistenta vant\nSet LEGO Classic|lego copii constructii creativ jocuri|80|300|4|12|jocuri|d|lego classic\nJoc de cărți (Uno, Dobble)|jocuri prieteni petreceri copii societate|30|90|6|80|jocuri|d|uno dobble carti joc\nCub Rubik / puzzle 3D|puzzle jocuri minte strategie|30|150|8|60|jocuri|d|cub rubik puzzle 3d\nSet Jenga / jocuri de petrecere|jocuri petreceri prieteni|60|200|8|70|jocuri|d|jenga joc petrecere\nEscape room acasă (joc)|jocuri minte prieteni puzzle|60|150|12|60|jocuri|d|escape room joc de societate\nJucărie STEM / roboți|copii tehnologie programare invatat jocuri|100|400|6|14|jocuri|pd|jucarie stem robot copii\nTelescop pentru începători|astronomie stiinta natura invatat|250|900|8|70|tech|pd|telescop incepatori\nSet de desen pentru copii|copii desen arta creativ|40|150|3|12|arta|ps|set desen copii\nTrotinetă / bicicletă pentru copii|copii sport aventura|150|700|3|12|sport|pd|trotineta copii\nRucsac școlar|copii student scoala birou|100|350|6|18|stil|p|rucsac scolar\nJucărie educativă / senzorială|copii bebe invatat jocuri|40|200|1|5|jocuri|pd|jucarie educativa copii mici\nCărți ilustrate pentru copii|copii citit carti|30|120|2|10|carti|ps|carti ilustrate copii\nCarte de bucate|gatit mancare carti bucatarie|50|150|16|90|carti|ps|carte de bucate\nSet manga / benzi desenate|anime manga citit carti colectie|60|250|10|50|carti|pd|set manga\nJurnal ghidat / agendă planner|scris jurnal birou creativ|40|120|12|80|birou|ps|agenda planner jurnal\nCarte de dezvoltare personală|citit carti invatat cariera|35|90|16|80|carti|p|carte dezvoltare personala\nAtlas / carte de călătorii|calatorii citit carti aventura|60|200|10|90|carti|ps|atlas calatorii carte\nSuport laptop + organizator birou|birou programare student calculator|50|250|16|60|birou|p|suport laptop organizator birou\nLampă de birou LED|birou citit student programare|60|250|12|70|birou|p|lampa birou led\nSet markere / caligrafie|creativ desen scris arta|40|150|8|70|birou|ps|set caligrafie markere\nBoxă retro / radio vintage|muzica retro casa|150|600|16|80|muzica|ls|boxa retro bluetooth\nChitară acustică pentru începători|muzica chitara instrument|300|900|10|60|muzica|d|chitara acustica incepatori\nKeyboard / pian digital|muzica pian instrument|400|2000|8|70|muzica|dp|pian digital\nMicrofon karaoke|muzica petreceri prieteni copii|80|350|6|60|muzica|d|microfon karaoke\nZbor cu balonul cu aer cald|aventura calatorii romantic|400|1200|14|80|exp|esl|zbor cu balonul voucher\nZbor în tunelul de vânt|aventura sport prieteni|150|500|8|60|exp|ed|tunel de vant zbor voucher\nAtelier de ceramică|creativ arta romantic prieteni|100|400|10|80|exp|es|atelier ceramica voucher\nCurs de gătit|gatit mancare prieteni romantic|150|450|14|80|exp|es|curs de gatit voucher\nDegustare de vinuri|vin bautura romantic prieteni|120|450|18|80|exp|esl|degustare vinuri voucher\nWeekend la pensiune / cabană|calatorii natura romantic relaxare munte|300|1500|18|80|exp|esl|voucher weekend pensiune cabana\nLecții de dans|dans muzica romantic sport|150|500|10|80|exp|es|lectii de dans voucher\nBilete la teatru / operă|arta muzica romantic cultura|80|400|12|90|exp|esl|bilete teatru opera\nSesiune foto profesională|fotografie amintiri familie romantic|150|600|1|90|exp|es|sesiune foto voucher\nZi la parc acvatic / aventură|aventura sport copii prieteni vara|100|400|6|60|exp|ed|bilete parc acvatic\nCurs de pictură / desen|desen pictura arta creativ|100|400|10|80|exp|es|curs pictura voucher\nExcursie de pescuit ghidată|pescuit aventura natura|150|600|14|80|exp|e|pescuit sportiv ghidat voucher\nLecție de zbor / simulator|aventura tehnologie gaming|200|800|14|70|exp|ed|simulator zbor voucher\nCană personalizată cu poze|amintiri foto personalizat prieteni|30|80|8|90|pers|sd|cana personalizata\nHarta stelelor din ziua specială|amintiri romantic personalizat|60|200|16|90|pers|sl|harta stelelor personalizata\nPernă / pătură cu poza voastră|amintiri foto personalizat casa|50|150|8|90|pers|sd|perna personalizata foto\nTricou personalizat|amintiri prieteni personalizat petreceri|40|120|8|70|pers|sd|tricou personalizat\nBijuterie gravată|amintiri romantic personalizat bijuterii|80|350|14|80|pers|sl|bijuterie gravata\nHartă răzuibilă a lumii|calatorii aventura personalizat|60|180|12|80|pers|sd|harta razuibila lumii\nPuzzle cu poza voastră|amintiri puzzle foto personalizat|50|150|6|90|pers|sd|puzzle personalizat foto";
+// BLOC 1, catalogul: transformă textul R într-o listă de obiecte (nume, tag-uri, preț, vârstă, categorie, stil, căutare).
+var C=R.split("\n").map(function(l){var a=l.split("|");return{n:a[0],t:a[1].split(" "),p:[+a[2],+a[3]],a:[+a[4],+a[5]],c:a[6],s:a[7],q:a[8]}});
+// Explicație: mai sus, R este catalogul de cadouri (un rând = un produs: nume, cuvinte-cheie, preț, vârstă, categorie, stil, căutare), iar C îl transformă în obiecte.
+// BLOC 2, liste fixe: hobby-urile din butoane (H), forma lor cu diacritice (HL) și numele stilurilor (S).
+var H=["gaming","fotbal","muzica","citit","gatit","cafea","fitness","drumetii","fotografie","desen","filme","calatorii","plante","tehnologie","ciclism","yoga","moda","sah","petreceri","programare","pescuit","camping","dans","gradinarit","bricolaj","animale","masini","vin"];
+var HL={gradinarit:"grădinărit",masini:"mașini",calatorii:"călătorii",sah:"șah",moda:"modă",gatit:"gătit"};
+var S={p:"Practic",d:"Distractiv",s:"Sentimental",e:"Experiență",l:"Rafinat / lux"};
+// Explicație: mai sus sunt hobby-urile (20 de butoane, fără dubluri), etichetele de stil și categoriile.
+var hs={},ss={},hid={},sav={};
+try{sav=JSON.parse(localStorage.getItem("pf_sav")||localStorage.getItem("gf_sav")||"{}")}catch(e){}
+// BLOC 3, ajutătoare: $ găsește un element, norm scoate diacriticele și majusculele, esc protejează textul în HTML, mk creează butoanele.
+function $(i){return document.getElementById(i)}
+function norm(s){return(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function mk(box,list,set,lab){if($(box).children.length)return;list=uniq(list);list.forEach(function(k){var b=document.createElement("button");b.type="button";b.className="chip";b.dataset.k=k;b.setAttribute("aria-pressed","false");b.textContent=lab[k]||k;b.onclick=function(){set[k]=!set[k];b.setAttribute("aria-pressed",!!set[k])};$(box).appendChild(b)})}
+mk("hc",H,hs,HL);mk("sc",Object.keys(S),ss,S);
+$("bud").oninput=function(){$("er2").hidden=true};$("inf").onchange=function(){$("bud").disabled=this.checked;$("er2").hidden=true};function bchips(){$("bq").innerHTML="";[0,50,100,200,500,1000,2000].forEach(function(v){var b=document.createElement("button");b.type="button";b.className="chip sm";b.textContent=cv(v)+" "+CC;b.onclick=function(){$("inf").checked=false;$("bud").disabled=false;$("bud").value=cv(v);$("er2").hidden=true};$("bq").appendChild(b)})}bchips();
+// Explicație: mai sus se pregătesc listele de stare și funcțiile care curăță textul (fără diacritice, majuscule sau cuvinte duplicate).
+// BLOC 4, potrivire de cuvinte: toks curăță ce scrii în cuvinte-cheie, st le scurtează, hit verifică dacă se potrivesc cu un cadou.
+function toks(s){var o=[];norm(s).split(/[,;\n]+/).forEach(function(x){x=x.trim();if(!x)return;o.push(x);x.split(/\s+/).forEach(function(y){if(y.length>3)o.push(y)})});return o}
+function st(w){return w.length>5?w.slice(0,-2):w}
+function hit(t,w){var s=st(w);return t.some(function(x){return x==w||x.indexOf(s)==0||(w.length>4&&w.indexOf(st(x))==0&&x.length>3)})}
+var OC={zi:[],nume:[],fara:[],aniv:["exp","pers","stil"],craciun:["casa","exp","pers"],paste:["casa","exp"],martisor:["stil","pers"],martie8:["stil","casa","exp"],valentine:["exp","stil","pers"],mama:["casa","stil","exp"],tata:["tech","outdoor","exp"],absolvire:["tech","exp","birou"],job:["birou","tech","stil"],pensie:["exp","casa","carti"],logodna:["stil","exp","pers"],nunta:["casa","pers","exp"],bebe:["pers","casa"],botez:["pers","casa"],casa:["casa"],multumire:["pers","carti","casa"],sanatate:["carti","casa","pers"],iertare:["pers","exp","stil"]};
+// Explicație: mai sus se potrivesc cuvintele scrise de tine cu cuvintele-cheie ale cadourilor.
+// BLOC 5, motorul de recomandare: dă puncte fiecărui cadou după hobby, stil, vârstă, ocazie, relație și buget, scade pentru ce vrei să eviți și întoarce lista sortată.
+function run(d){
+ var out=[];
+ C.forEach(function(it){
+  if(it.p[0]>d.bud||hid[it.n])return;
+  var pts=0,why=[],bad=0;
+  d.hob.forEach(function(w){if(hit(it.t,w)){pts+=4;why.push(w)}});
+  d.hob.forEach(function(w){var sy=SY2[w];if(sy&&!hit(it.t,w)){var n=sy.filter(function(z){return it.t.indexOf(z)>-1}).length;if(n){pts+=Math.min(n,2)*1.5;why.push(w)}}});
+  var ph=0;d.past.forEach(function(w){if(hit(it.t,w)||norm(it.c)==w)ph++});pts+=Math.min(ph,2)*1.5;
+  d.no.forEach(function(w){if(hit(it.t,w)||norm(it.n).indexOf(w)>-1)bad=1});if(bad)pts-=7;
+  var sm=0;d.sty.forEach(function(k){if(it.s.indexOf(k)>-1)sm++});pts+=Math.min(sm,2)*1.5;
+  if(d.age>=it.a[0]&&d.age<=it.a[1])pts+=1;else pts-=5;
+  if(OC[d.oc].indexOf(it.c)>-1)pts+=1;
+  var fam=["parinte","bunic","frate","copil","unchi","var"].indexOf(d.rel)>-1,frm=["coleg","sef","profesor","vecin"].indexOf(d.rel)>-1;
+  if(d.rel=="partener"&&/[sl]/.test(it.s))pts+=1;
+  if(frm&&/[sl]/.test(it.s)&&it.p[0]>d.bud*.6)pts-=2;
+  if(frm&&it.c=="pers"&&d.rel!="vecin")pts-=1;
+  if(fam&&/[ps]/.test(it.s))pts+=.5;
+  if((d.rel=="bunic"||d.rel=="parinte")&&/[ps]/.test(it.s)&&it.c!="gaming")pts+=.7;
+  if(isFinite(d.bud)?(d.bud>0&&Math.min(it.p[1],d.bud)/d.bud>=.5):it.p[1]>1500)pts+=.8;
+  out.push({it:it,pts:pts,why:why.filter(function(x,i,a){return a.indexOf(x)==i}),ph:ph,sm:sm,bad:bad,hi:Math.min(it.p[1],d.bud)});
+ });
+ Object.keys(CU).forEach(function(k){if(!hs[k])return;var L=CU[k];
+  [["hob","Accesorii și echipament pentru "+L,[30,800],"cadou pentru pasionati de "+L,"🎯"],["exp","Curs, atelier sau experiență de "+L,[60,600],"curs initiere "+L,"🎓"]].forEach(function(q,i){
+   if(q[2][0]>d.bud)return;var it={n:q[1],t:[k],p:q[2],a:[6,99],c:q[0],s:"pdl",q:q[3],e:q[4]};if(hid[it.n])return;
+   out.push({it:it,pts:9-i,why:[L],ph:0,sm:0,bad:0,hi:Math.min(q[2][1],d.bud)})})});
+ return out.sort(function(a,b){return b.pts-a.pts});
+}
+// Explicație: mai sus run() dă puncte pentru hobby, cadouri plăcute, stil, vârstă, ocazie, relație și buget și scade pentru ce vrei să eviți.
+// BLOC 6, magazine: usedOK spune dacă un cadou se poate lua second-hand, SS alege magazinele potrivite tipului de cadou.
+function usedOK(it){return !!it.q&&["tech","gaming","jocuri","carti","sport","outdoor","foto","arta","muzica","casa","stil","birou"].indexOf(it.c)>-1&&!/card|voucher|bilete|curs|parfum|ceai|cafea|îngrijire|plantă|ierburi/i.test(it.n)}
+var gs=function(d){return function(e){return"https://www.google.com/search?q=site%3A"+d+"+"+e}},
+SD={emag:["eMAG",function(e){return"https://www.emag.ro/search/"+e}],altex:["Altex",function(e){return"https://altex.ro/cauta/?q="+e}],flanco:["Flanco",function(e){return"https://www.flanco.ro/catalogsearch/result/?q="+e}],pcg:["PC Garage",function(e){return"https://www.pcgarage.ro/cauta/"+e+"/"}],elef:["Elefant",function(e){return"https://www.elefant.ro/search?SearchTerm="+e}],cart:["Cărturești",function(e,q){return"https://carturesti.ro/product/search/"+encodeURIComponent(q)}],deca:["Decathlon",function(e){return"https://www.decathlon.ro/search?Ntt="+e}],herv:["Hervis",gs("hervis.ro")],inter:["Intersport",gs("intersport.ro")],ikea:["IKEA",function(e){return"https://www.ikea.com/ro/ro/search/?q="+e}],dede:["Dedeman",gs("dedeman.ro")],jysk:["JYSK",gs("jysk.ro")],fd:["Fashion Days",gs("fashiondays.ro")],ans:["Answear",gs("answear.ro")],zal:["Zalando",function(e){return"https://www.zalando.ro/catalog/?q="+e}],noti:["Notino",gs("notino.ro")],seph:["Sephora",gs("sephora.ro")],etsy:["Etsy",function(e){return"https://www.etsy.com/ro/search?q="+e}],smart:["Smartbox",gs("smartbox.com")],wonder:["Wonderbox",gs("wonderbox.ro")],tick:["iabilet",gs("iabilet.ro")],udemy:["Udemy",function(e){return"https://www.udemy.com/courses/search/?q="+e}]};
+// Magazinele se aleg după tipul cadoului, ca să nu apară Altex la pescuit sau Decathlon la parfum.
+function SS(it){var c=it?it.c:"",T=norm(((it&&it.t)||[]).join(" ")+" "+((it&&it.n)||""));
+ if(/pescuit|pescar|lanseta/.test(T))return["deca","emag","herv"];
+ if(c=="tech"||c=="gaming")return["emag","altex","pcg","flanco"];
+ if(c=="foto")return["emag","altex","pcg"];
+ if(c=="muzica")return["emag","altex","elef"];
+ if(c=="casa")return/espressor|air fryer|sous|blender|storcator|masina|proiector|robot/.test(T)?["emag","flanco","altex"]:/plante|gradinarit/.test(T)?["emag","dede","ikea"]:["emag","ikea","jysk","elef"];
+ if(c=="jocuri")return["emag","elef","cart"];
+ if(c=="carti")return["cart","elef","emag"];
+ if(c=="birou")return["emag","elef","cart"];
+ if(c=="arta")return["emag","elef","cart","etsy"];
+ if(c=="sport"||c=="outdoor")return["deca","herv","inter","emag"];
+ if(c=="stil")return/parfum|ingrijire|machiaj/.test(T)?["noti","seph","emag"]:["emag","fd","ans","zal"];
+ if(c=="pers")return["etsy","emag","elef"];
+ if(c=="exp")return/concert|bilete|teatru|opera/.test(T)?["tick","smart"]:/curs/.test(T)?["udemy","emag"]:["smart","wonder"];
+ if(c=="hob")return["emag","elef","etsy"];
+ return["emag","elef"]}
+// Magazine pe țări: pentru altă țară decât România, shop() folosește fshop(), cu magazinele țării. CTRY = magazine generale (s), experiențe (e), second-hand (u), căutare Google (g). EQ = căutarea în engleză pentru fiecare cadou din catalog.
+var CT="ro",CTRY={us:{s:[["Amazon","https://www.amazon.com/s?k=%Q%"],["Walmart","https://www.walmart.com/search?q=%Q%"],["Target","https://www.target.com/s?searchTerm=%Q%"]],e:[["Groupon","https://www.groupon.com/search?query=%Q%"],["Ticketmaster","https://www.ticketmaster.com/search?q=%Q%"]],u:[["eBay (used)","https://www.ebay.com/sch/i.html?_nkw=%Q%"]],g:["Google Shopping","https://www.google.com/search?tbm=shop&q=%Q%"]},
+uk:{s:[["Amazon UK","https://www.amazon.co.uk/s?k=%Q%"],["Argos","https://www.argos.co.uk/search/%Q%/"],["John Lewis","https://www.johnlewis.com/search?search-term=%Q%"]],e:[["Groupon UK","https://www.groupon.co.uk/search?query=%Q%"],["Ticketmaster UK","https://www.ticketmaster.co.uk/search?q=%Q%"]],u:[["eBay UK (used)","https://www.ebay.co.uk/sch/i.html?_nkw=%Q%"],["Vinted UK","https://www.vinted.co.uk/catalog?search_text=%Q%"]],g:["Google Shopping","https://www.google.co.uk/search?tbm=shop&q=%Q%"]},
+es:{s:[["Amazon España","https://www.amazon.es/s?k=%Q%"],["PcComponentes","https://www.pccomponentes.com/buscar/?query=%Q%"],["Fnac España","https://www.fnac.es/SearchResult/ResultList.aspx?Search=%Q%"]],e:[["Groupon España","https://www.groupon.es/search?query=%Q%"]],u:[["Wallapop","https://es.wallapop.com/app/search?keywords=%Q%"],["Vinted","https://www.vinted.es/catalog?search_text=%Q%"]],g:["Google Shopping","https://www.google.es/search?tbm=shop&q=%Q%"]},
+fr:{s:[["Amazon France","https://www.amazon.fr/s?k=%Q%"],["Fnac","https://www.fnac.com/SearchResult/ResultList.aspx?Search=%Q%"],["Cdiscount","https://www.cdiscount.com/search/10/%Q%.html"],["Decathlon","https://www.decathlon.fr/search?Ntt=%Q%"]],e:[["Groupon France","https://www.groupon.fr/search?query=%Q%"],["Ticketmaster","https://www.ticketmaster.fr/fr/resultat?ipSearch=%Q%"]],u:[["Leboncoin","https://www.leboncoin.fr/recherche?text=%Q%"],["Vinted","https://www.vinted.fr/catalog?search_text=%Q%"]],g:["Google Shopping","https://www.google.fr/search?tbm=shop&q=%Q%"]},
+in:{s:[["Amazon India","https://www.amazon.in/s?k=%Q%"],["Flipkart","https://www.flipkart.com/search?q=%Q%"],["Croma","https://www.croma.com/searchB?q=%Q%"]],e:[],u:[["OLX India","https://www.olx.in/items/q-%Q%"]],g:["Google Shopping","https://www.google.co.in/search?tbm=shop&q=%Q%"]},
+cn:{s:[["淘宝 Taobao","https://s.taobao.com/search?q=%Q%"],["京东 JD","https://search.jd.com/Search?keyword=%Q%"],["天猫 Tmall","https://list.tmall.com/search_product.htm?q=%Q%"]],e:[],u:[["闲鱼 Xianyu","https://www.goofish.com/search?q=%Q%"]],g:["百度 Baidu","https://www.baidu.com/s?wd=%Q%"]}},EQ={"casti wireless noise cancelling": "wireless noise cancelling headphones", "boxa bluetooth portabila": "portable bluetooth speaker", "tastatura mouse gaming": "gaming keyboard mouse", "card steam playstation": "steam playstation gift card", "joc societate catan dixit": "board game catan dixit", "puzzle 1000 piese": "1000 piece jigsaw puzzle", "set lego technic": "lego technic set", "carte bestseller": "bestseller novel book", "kindle ebook reader": "kindle e-reader", "cutit bucatarie profesional": "professional chef knife", "set cafea specialitate v60": "specialty coffee v60 set", "espressor automat": "automatic espresso machine", "set ceai premium": "premium tea set", "ghete fotbal minge": "football boots soccer ball", "tricou echipa fotbal": "football team jersey", "smartwatch fitness": "fitness smartwatch", "gantere reglabile benzi": "adjustable dumbbells resistance bands", "saltea yoga": "yoga mat", "rucsac drumetie 30l": "hiking backpack 30l", "hamac camping": "camping hammock", "termos inox": "stainless steel thermos", "instax mini": "instax mini camera", "trepied lumina inel": "tripod ring light", "set pictura acrilice": "acrylic painting set", "tableta grafica wacom": "wacom graphics tablet", "ukulele": "ukulele", "pickup vinyl": "vinyl record player", "bilete concert": "concert tickets", "voucher karting escape room": "experience voucher karting escape room", "voucher spa masaj": "spa massage voucher", "voucher cina degustare": "dinner tasting experience voucher", "planta apartament ghiveci": "indoor plant pot", "kit ierburi aromatice": "herb growing kit", "veioza design": "design table lamp", "parfum": "perfume", "portofel piele": "leather wallet", "set ingrijire barba": "beard grooming kit", "power bank 20000": "power bank 20000mah", "stilou caiet premium": "fountain pen notebook set", "card cadou curs online": "online course gift card", "proiector mini": "mini projector", "masina popcorn": "popcorn machine", "casca bicicleta lumini": "bike helmet lights", "set sah lemn": "wooden chess set", "tablou canvas personalizat": "personalized canvas print", "album foto personalizat": "personalized photo album", "cadou personalizat": "personalized gift", "air fryer": "air fryer", "set cocktailuri shaker": "cocktail shaker set", "lanseta telescopica mulineta": "telescopic fishing rod reel"};
+function fshop(q,it,lo,hi){var X=CTRY[CT],e=encodeURIComponent(EQ[q]||q),c=(last&&last.cond)||"all",u=it?usedOK(it):0,k=it?it.c:"",
+ H=hi?Math.round(cv(hi)):0,L=lo&&c!="used"?Math.round(cv(lo)):0,
+ pf=function(l){if(/tbm=shop/.test(l))return H?l+"&tbs=mr:1,price:1,ppr_min:"+L+",ppr_max:"+H+(c=="sale"?",sales:1":""):l+(c=="sale"?"&tbs=mr:1,sales:1":"");if(!H)return l;
+  if(/amazon\./.test(l))return l+(L?"&low-price="+L:"")+"&high-price="+H;if(/ebay\./.test(l))return l+"&_udlo="+L+"&_udhi="+H;if(/vinted\./.test(l))return l+"&price_from="+L+"&price_to="+H;return l},
+ f=function(l){return l.map(function(a){return[a[0],pf(a[1].replace("%Q%",e))]})},G=f([X.g])[0],N=f(k=="exp"&&X.e.length?X.e:X.s),U=f(X.u);
+ if(c=="sale")return[[G[0]+" (sale)",G[1]]].concat(N);
+ N=N.concat([G]);if(c=="used"&&u)return U;if(c=="all"&&u)return N.concat(U);return N}
+// BLOC 6, magazine: shop construiește linkurile de căutare către magazine, cu filtru de preț unde magazinul îl permite.
+function shop(q,lo,hi,it){if(CT!="ro")return fshop(q,it,lo,hi);var e=encodeURIComponent(q),c=(last&&last.cond)||"all",u=it?usedOK(it):0,
+ G="https://www.google.com/search?tbm=shop&q="+e+(hi?"&tbs=mr:1,price:1,ppr_min:"+(c=="used"?0:lo||0)+",ppr_max:"+hi+(c=="sale"?",sales:1":""):c=="sale"?"&tbs=mr:1,sales:1":""),
+ N=SS(it).map(function(k){return[SD[k][0],SD[k][1](e,q)]}),
+ U=[["OLX (second-hand)","https://www.olx.ro/oferte/q-"+encodeURIComponent(q.trim().replace(/\s+/g,"-"))+"/"+(hi?"?search%5Bfilter_float_price%3Afrom%5D=0&search%5Bfilter_float_price%3Ato%5D="+hi:"")],["Vinted (second-hand)","https://www.vinted.ro/catalog?search_text="+e+(hi?"&price_from=0&price_to="+hi:"")]];
+ N=c=="sale"?[["Google Shopping (reduceri)",G]].concat(N):N.concat([["Google Shopping",G]]);
+ if(c=="used"&&u)return U;if(c=="all"&&u)return N.concat(U);return N}
+var last=null,lastR=[];
+// Explicație: mai sus shop() construiește linkurile de căutare către magazine, cu filtru de preț pentru Google Shopping.
+var EM={tech:"🎧",gaming:"🎮",jocuri:"🧩",carti:"📚",casa:"🏡",sport:"⚽",outdoor:"🏕️",foto:"📸",arta:"🎨",muzica:"🎵",exp:"✨",stil:"👜",birou:"✒️",pers:"💌"},RM=matchMedia("(prefers-reduced-motion: reduce)").matches,step=0;
+var B=[0,20,50,100,150,200,300,400,500,750,1000,1500,2000,3000,5000,Infinity],cat="all",srt="m",view=[],
+CN={tech:"Tech",gaming:"Gaming",jocuri:"Jocuri",carti:"Cărți",casa:"Casă",sport:"Sport",outdoor:"Outdoor",foto:"Foto",arta:"Artă",muzica:"Muzică",exp:"Experiențe",stil:"Stil",birou:"Birou",pers:"Personalizat"},
+OCN={zi:"zi de naștere",nume:"zi de nume",aniv:"aniversare de cuplu",craciun:"Crăciun",paste:"Paște",martisor:"1 Martie",martie8:"8 Martie",valentine:"Ziua Îndrăgostiților",mama:"Ziua Mamei",tata:"Ziua Tatălui",absolvire:"absolvire",job:"job nou",pensie:"pensionare",logodna:"logodnă",nunta:"nuntă",bebe:"bebeluș",botez:"botez",casa:"casă nouă",multumire:"mulțumire",sanatate:"însănătoșire",iertare:"împăcare",fara:"fără ocazie"};
+var TW={tech:["model simplu, fără funcții în plus","echilibru bun, funcțiile care contează","top de gamă, performanță maximă"],gaming:["acces de bază, pentru început","ediție standard, cea mai populară","ediție completă sau accesorii pro"],jocuri:["ediție compactă, ușor de purtat","ediție standard, pentru 2–6 persoane","ediție de colecție, materiale premium"],carti:["ediție broșată, pentru citit relaxat","ediție cartonată, de păstrat","ediție de colecție sau variantă digitală top"],casa:["variantă de bază, practică","calitate bună, folosită zilnic","materiale premium, ține ani"],sport:["echipament de început","echipament pentru antrenament serios","echipament avansat, de performanță"],outdoor:["ușor și simplu, pentru ieșiri scurte","rezistent, pentru drumeții dese","tehnic, pentru expediții"],foto:["accesorii simple, ușor de folosit","calitate bună pentru pasionați","echipament semi-profesional"],arta:["set de început, pentru exerciții","set artistic complet","materiale profesionale"],muzica:["instrument sau accesoriu de început","sunet de calitate bună","sunet superior, pentru pasionați"],exp:["experiență scurtă, pentru o persoană","experiență completă, pentru unul sau doi","experiență de lux, cu servicii extra"],stil:["design simplu, de zi cu zi","brand cunoscut, calitate bună","brand de top, finisaje premium"],birou:["set simplu, pentru început","set de calitate, plăcut de folosit","set premium, ca un obiect de colecție"],pers:["personalizare simplă","personalizare completă, cu mai multe detalii","ediție premium, în ramă sau cutie cadou"]};
+// Explicație: mai sus sunt categoriile și ocaziile, în română.
+// BLOC 7, variante și carduri: tiers împarte prețul în Economic, Echilibrat și Premium, iar pick elimină ideile prea asemănătoare.
+function tiers(x){var it=x.it,lo=it.p[0],hi=x.hi;if(!it.q||hi-lo<60)return[];var u=hi>3000?100:10,r=hi-lo,c=[lo,lo+r*.3,lo+r*.65,hi].map(function(v){return Math.round(v/u)*u}),w=TW[it.c]||TW.casa;
+ if(c[1]<=c[0]||c[2]<=c[1]||c[3]<=c[2])return[];
+ return[{n:"Economic",lo:c[0],hi:c[1],q:" ieftin",h:w[0]},{n:"Echilibrat",lo:c[1],hi:c[2],q:"",h:w[1]},{n:"Premium",lo:c[2],hi:c[3],q:" premium",h:w[2]}]}
+var LIM=12;
+function pick(l,cap){var out=[],cc={};l.forEach(function(x){var c=x.it.c;if(out.length>=LIM||(cc[c]||0)>=cap)return;
+ if(out.some(function(y){return y.it.c==c&&y.it.t.filter(function(w){return x.it.t.indexOf(w)>-1}).length>=3}))return;cc[c]=(cc[c]||0)+1;out.push(x)});return out}
+function vh0(x,t){var it=x.it,v=tiers(x)[t],lo=v?v.lo:it.p[0],hi=v?v.hi:x.hi,pr=hi===0?"Gratuit":(lo>=hi?cv(hi):cv(lo)+"–"+cv(hi))+" "+CC;
+ return'<div class="row"><span class="pr">'+pr+'</span>'+(v?'<span class="pct">'+v.h+'</span>':'')+'</div>'+(it.q?'<div class="links">'+shop(it.q+(v?v.q:""),lo,hi,it).map(function(l){return'<a href="'+l[1]+'" target="_blank" rel="noopener sponsored">'+l[0]+'</a>'}).join("")+'</div><p class="pct">'+pn(it,lo,hi)+'</p>':'<p class="pct">Se face acasă, fără magazin: contează gestul, nu prețul.</p>')}
+// BLOC 7: card desenează un cadou (procent de potrivire, motive, linkuri, butoane).
+function card(x,k,big){var it=x.it,pct=Math.max(20,Math.min(98,Math.round(38+x.pts*6.5))),why=[],T=tiers(x);
+ if(x.why.length)why.push("hobby: "+x.why.join(", "));if(x.ph)why.push("seamănă cu ce i-a plăcut");if(x.sm)why.push("stilul ales");
+ return'<article class="item'+(big?' big':'')+'" data-k="'+k+'" style="--i:'+k+'">'+(big?'<span class="tag">Alegerea noastră</span>':'')+'<div class="top"><span class="em" aria-hidden="true">'+ico(it)+'</span><div><h3>'+esc(it.n)+'</h3><p class="why">'+(why.length?"Potrivit: "+esc(why.join(" · ")):"Alegere sigură pentru vârstă și buget")+'</p></div><div class="ring" style="--v:'+pct+'" role="img" aria-label="Potrivire '+pct+'%"><b>'+pct+'%</b></div></div>'+
+ (T.length?'<div class="seg" role="group" aria-label="Variante">'+T.map(function(v,i){return'<button type="button" data-t="'+i+'" aria-pressed="'+(i==1)+'">'+v.n+'</button>'}).join("")+'</div>':'')+'<div class="vb">'+vhtml(x,1)+'</div>'+
+ '<div class="row"><span></span><span><button class="ico" data-s="'+k+'" aria-pressed="'+!!sav[it.n]+'">'+(sav[it.n]?"Salvat":"Salvează")+'</button> <button class="ico" data-h="'+k+'">Nu e el/ea</button></span></div></article>'}
+// Explicație: mai sus tiers() împarte prețul în Economic, Echilibrat și Premium, iar pick() elimină ideile asemănătoare.
+// BLOC 8, afișare: render pune pe ecran rezultatele, filtrele, sortarea și butoanele de salvare.
+function render(){
+ if(!last)return;var d=last,o=$("out");lastR=run(d);o.hidden=false;
+ if(!lastR.length){o.innerHTML='<div class="empty">Nu am găsit nimic pentru acest buget. Mărește bugetul sau încearcă un gest personal.</div>';return}
+ var pool=lastR.slice(0,160),cats=[];pool.forEach(function(x){if(cats.indexOf(x.it.c)<0)cats.push(x.it.c)});if(cat!="all"&&cats.indexOf(cat)<0)cat="all";
+ view=pick(pool.filter(function(x){return cat=="all"||x.it.c==cat}),cat=="all"?3:9);
+ if(srt=="a")view.sort(function(a,b){return a.it.p[0]-b.it.p[0]});if(srt=="d")view.sort(function(a,b){return b.hi-a.hi});if(srt=="f")view.sort(function(a,b){return dv(a,1).hi-dv(b,1).hi});
+ var bl=d.bud===Infinity?"Fără limită":Math.round(cv(d.bud))+" "+CC,pl=[d.age+" ani",OCN[d.oc]].concat(d.hob.slice(0,3),["buget: "+bl].concat(d.cond!="all"?[{new:"produse noi",sale:"la reducere",used:"second-hand"}[d.cond]]:[],d.date?["până pe "+fd(new Date(d.date+"T12:00:00"))]:[])).map(function(t){return'<span class="pill">'+esc(t)+'</span>'}).join("");
+ var big=srt=="m",h='<h2 class="rh">Idei pentru '+esc(d.nume||"el/ea")+'</h2><div class="sum">'+pl+'<button class="btn" id="ed">Editează</button></div><div class="fb"><button class="chip sm" data-c="all" aria-pressed="'+(cat=="all")+'">Toate</button>'+cats.map(function(c){return'<button class="chip sm" data-c="'+c+'" aria-pressed="'+(cat==c)+'">'+(CN[c]||c)+'</button>'}).join("")+'<select id="so" aria-label="Sortare"><option value="m">Cele mai potrivite</option><option value="a">Preț crescător</option><option value="d">Preț descrescător</option><option value="f">Livrare rapidă</option></select></div>';
+ h+=(big?card(view[0],0,1):'')+'<div class="res">'+view.slice(big?1:0).map(function(x,i){return card(x,i+(big?1:0))}).join("")+'</div>'+(pool.length>view.length?'<p class="row" style="justify-content:center;margin-top:18px"><button class="btn" id="mo">Arată mai multe idei</button></p>':'');
+ h+='<h2 class="rh" style="margin-top:28px">Mesaj pentru felicitare</h2><div class="msg" id="mg">'+esc(msg(d))+'</div><p class="row" style="justify-content:flex-start"><button class="btn" id="cp">Copiază mesajul</button><button class="btn" id="rl">Alte idei</button><button class="btn" id="ag">Începe din nou</button></p>';
+ o.innerHTML=h;$("so").value=srt;
+ $("so").onchange=function(){srt=this.value;render()};$("ed").onclick=function(){go2(0);$("f").scrollIntoView({behavior:RM?"auto":"smooth"})};
+ o.querySelectorAll("[data-c]").forEach(function(b){b.onclick=function(){cat=b.dataset.c;render()}});
+ o.querySelectorAll(".seg").forEach(function(g){g.onclick=function(e){var b=e.target.closest("button");if(!b)return;var c=g.closest(".item");g.querySelectorAll("button").forEach(function(z){z.setAttribute("aria-pressed",z==b)});c.querySelector(".vb").innerHTML=vhtml(view[c.dataset.k],+b.dataset.t)}});
+ o.querySelectorAll("[data-s]").forEach(function(b){b.onclick=function(){var n=view[b.dataset.s].it.n;if(sav[n])delete sav[n];else{var z=view[b.dataset.s].it;sav[n]={q:z.q||"",c:z.c,t:z.t[0]||""}}try{localStorage.setItem("pf_sav",JSON.stringify(sav))}catch(e){}render();showSaved()}});
+ o.querySelectorAll("[data-h]").forEach(function(b){b.onclick=function(){hid[view[b.dataset.h].it.n]=1;render()}});
+ var mo=$("mo");if(mo)mo.onclick=function(){LIM+=12;render()};
+  $("cp").onclick=function(){var t=$("mg").textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){$("cp").textContent="Copiat"},function(){$("cp").textContent="Copiază manual"})};
+ $("rl").onclick=function(){view.slice(0,4).forEach(function(x){hid[x.it.n]=1});render()};
+ $("ag").onclick=function(){go2(0);$("f").scrollIntoView({behavior:RM?"auto":"smooth"})};
+}
+// BLOC 8: msg scrie mesajul de felicitare potrivit ocaziei; showSaved arată cadourile salvate (păstrate în browser).
+function msg(d){var n=d.nume||"",o={zi:"La mulți ani",nume:"La mulți ani de Ziua Numelui",aniv:"La mulți ani împreună",craciun:"Crăciun fericit",paste:"Paște fericit",martisor:"Un mărțișor pentru tine",martie8:"La mulți ani de 8 Martie",valentine:"Ziua Îndrăgostiților fericită",mama:"Ziua Mamei fericită",tata:"Ziua Tatălui fericită",absolvire:"Felicitări pentru absolvire",job:"Felicitări pentru noul drum",pensie:"Pensionare fericită",logodna:"Felicitări pentru logodnă",nunta:"Felicitări pentru nuntă",bebe:"Felicitări pentru bebeluș",botez:"Felicitări pentru botez",casa:"Casă nouă, cu bucurii",multumire:"Mulțumesc din suflet",sanatate:"Însănătoșire grabnică",iertare:"Îmi pare rău și țin la tine",fara:"Un gând bun"}[d.oc];return o+(n?", "+n:"")+"! Ți-am ales ceva care să te facă să zâmbești. Sper să îți placă la fel de mult cum m-am bucurat eu să te surprind."}
+function showSaved(){var k=Object.keys(sav),s=$("sv");if(!k.length){s.hidden=true;return}s.hidden=false;
+ s.innerHTML='<h2>Salvate ('+k.length+')</h2><div class="res">'+k.map(function(n){return'<div class="item"><div class="top"><h3>'+esc(n)+'</h3><button class="ico" data-r="'+esc(n)+'">Șterge</button></div><div class="links">'+(function(o){o=typeof o=="string"?{q:o}:o;return o.q?shop(o.q,0,0,{q:o.q,c:o.c,t:[o.t||""],n:n}):[]})(sav[n]).map(function(l){return'<a href="'+l[1]+'" target="_blank" rel="noopener sponsored">'+l[0]+'</a>'}).join("")+'</div></div>'}).join("")+'</div>';
+ s.querySelectorAll("[data-r]").forEach(function(b){b.onclick=function(){delete sav[b.dataset.r];try{localStorage.setItem("pf_sav",JSON.stringify(sav))}catch(e){}showSaved();render()}})}
+// Explicație: mai sus render() desenează rezultatele, filtrele, sortarea și butoanele.
+var P=document.querySelectorAll(".pane"),ST=document.querySelectorAll(".steps i");
+// BLOC 9, formular: go2 mută între cei trei pași și verifică ce e obligatoriu.
+function go2(n){if(step==1&&$("hx").value.trim()){addH($("hx").value);$("hx").value=""}if(n>0&&step==0&&!parseInt($("varsta").value,10)){$("er").hidden=false;$("varsta").focus();return}
+ $("er").hidden=true;step=n;P.forEach(function(p,i){p.classList.toggle("on",i==n)});ST.forEach(function(p,i){p.classList.toggle("on",i<=n)});
+ $("bk").style.visibility=n?"visible":"hidden";$("nx").textContent=n==2?"Găsește cadoul":"Continuă";$("gx").classList.toggle("open",n==2)}
+// Explicație: mai sus este navigarea între cei trei pași ai formularului.
+// BLOC 9: pop face animația cu confetti la rezultate.
+function pop(){if(RM)return;var c=$("cf"),x=c.getContext("2d"),W=c.width=innerWidth,H=c.height=innerHeight,K=["#ff5c7a","#8f6bff","#ffc23d","#5ef2c0"],Q=[],t=0,i;
+ for(i=0;i<120;i++)Q.push({x:W/2,y:H*.4,vx:(Math.random()-.5)*18,vy:-Math.random()*15-4,s:5+Math.random()*7,c:K[i%4],r:Math.random()*6,v:(Math.random()-.5)*.4});
+ (function f(){x.clearRect(0,0,W,H);Q.forEach(function(p){p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.r+=p.v;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()});if(++t<120)requestAnimationFrame(f);else x.clearRect(0,0,W,H)})()}
+// BLOC 9: find strânge datele din formular, verifică vârsta și bugetul, nu lasă data în trecut și pornește căutarea.
+function find(){addH($("hx").value);$("hx").value="";var age=parseInt($("varsta").value,10);if(!age){go2(0);$("er").hidden=false;return}
+ if(!$("inf").checked&&$("bud").value===""){go2(2);$("er2").hidden=false;return}
+ hid={};LIM=12;last={nume:$("nume").value.trim(),age:age,bud:$("inf").checked?Infinity:Math.max(0,+$("bud").value/FX),rel:$("rel").value,oc:$("oc").value,
+ hob:uniq(hobs()),
+ sty:Object.keys(ss).filter(function(k){return ss[k]}),past:toks($("past").value),no:toks($("no").value),date:(function(){var e=$("dl"),d=new Date(),m=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"),c=e.value&&e.value<m;e.min=m;if(c)e.value=m;$("erd").hidden=!c;return e.value})(),cond:COND};
+ var o=$("out");o.hidden=false;o.innerHTML='<h2 class="rh">Despachetăm ideile…</h2><div class="sk"><div></div><div></div></div>';
+ o.scrollIntoView({behavior:RM?"auto":"smooth"});
+ setTimeout(function(){render();pop()},RM?0:1000)}
+$("nx").onclick=function(){step<2?go2(step+1):find()};$("bk").onclick=function(){go2(step-1)};$("f").onsubmit=function(e){e.preventDefault();step<2?go2(step+1):find()};
+// Explicație: mai sus se creează butoanele de buget rapid și de profil rapid.
+// BLOC 9: sync ține butoanele (chip-urile) apăsate la fel cu ce e selectat.
+function sync(){document.querySelectorAll(".chip[data-k]").forEach(function(b){b.setAttribute("aria-pressed",!!(hs[b.dataset.k]||ss[b.dataset.k]))})}
+[{n:"Gamer, 20 ani",age:20,rel:"prieten",oc:"zi",h:["gaming","tehnologie"],s:["d"],b:300},{n:"Iubită, 27 ani, romantic",age:27,rel:"partener",oc:"zi",h:["calatorii","muzica","gatit"],s:["s","e"],b:750},{n:"Coleg, mulțumire",age:35,rel:"coleg",oc:"multumire",h:["cafea","citit"],s:["p"],b:100},{n:"Sportiv, 30 ani",age:30,rel:"prieten",oc:"craciun",h:["fitness","drumetii","ciclism"],s:["p"],b:500}].forEach(function(p){var b=document.createElement("button");b.type="button";b.className="chip";b.textContent=p.n;
+ b.onclick=function(){$("varsta").value=p.age;$("rel").value=p.rel;$("oc").value=p.oc;$("inf").checked=false;$("bud").disabled=false;$("bud").value=cv(p.b);Object.keys(hs).forEach(function(k){hs[k]=0});Object.keys(ss).forEach(function(k){ss[k]=0});p.h.forEach(function(k){hs[k]=1});p.s.forEach(function(k){ss[k]=1});sync();go2(2)};$("ps").appendChild(b)});
+$("th").onclick=function(){var r=document.documentElement,c=r.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");r.dataset.theme=c=="dark"?"light":"dark"};
+// Explicație: mai sus este animația cu confetti, apoi find() adună datele și afișează rezultatele.
+// BLOC 10, muzica: sunetul e generat în browser cu Web Audio, fără fișiere mp3. nt cântă o notă, brush face perii, sched programează notele, setup pornește sunetul, mus pornește sau oprește.
+var AC,MG,TC,mon=0,nx=0,sp=0,NB,CH=[[329.63,392,493.88,587.33],[261.63,329.63,392,493.88],[261.63,329.63,349.23,440],[246.94,329.63,349.23,440]],WB=[[130.81,164.81,196,164.81],[110,130.81,164.81,130.81],[146.83,174.61,220,174.61],[98,123.47,146.83,123.47]],VB=[[587.33,659.25,783.99,880,987.77],[523.25,659.25,783.99,880,987.77],[523.25,587.33,659.25,698.46,880],[587.33,659.25,698.46,783.99,880]];
+function nt(f,t,d,v,ty){var o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(MG);o.start(t);o.stop(t+d+.05)}
+function brush(t){var s=AC.createBufferSource(),g=AC.createGain(),f=AC.createBiquadFilter();s.buffer=NB;f.type="bandpass";f.frequency.value=6000;g.gain.setValueAtTime(.035,t);g.gain.exponentialRampToValueAtTime(.0001,t+.07);s.connect(f);f.connect(g);g.connect(MG);s.start(t);s.stop(t+.08)}
+// Muzică de lift: jazz lejer în Do major, 100 bpm cu swing, acorduri Cmaj9–Am9–Dm9–G13, pian electric blând, bas „walking”, vibrafon rar și perii ușoare.
+function sched(){var q=60/100/2;while(nx<AC.currentTime+.35){var s=sp%32,b=s>>3,i=s&7,t=nx+((i&1)?q*.3:0),c=CH[b],w=WB[b],v=VB[b];
+ if(i==0||i==3||i==5){c.forEach(function(f){nt(f,t,i==0?1.1:.7,.04,"sine");nt(f*2,t,.4,.008,"triangle")})}
+ if(i%2==0){var f=w[i>>1];nt(f,t,.5,.22,"sine");nt(f*2,t,.3,.05,"triangle")}
+ if(i!=1&&i!=5)brush(t);
+ if(Math.random()<(i%2==0?.4:.2)){var m=v[Math.floor(Math.random()*v.length)];nt(m,t,1.6,.06,"sine");nt(m*4,t,.35,.012,"sine")}
+ nx+=q;sp++}}
+function setup(){AC=new(window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();MG.gain.value=0;MG.connect(AC.destination);NB=AC.createBuffer(1,AC.sampleRate*.1,AC.sampleRate);var d=NB.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+function mus(on){try{if(on){if(!AC)setup();AC.resume();MG.gain.cancelScheduledValues(AC.currentTime);MG.gain.setValueAtTime(MG.gain.value,AC.currentTime);MG.gain.linearRampToValueAtTime(+$("vol").value,AC.currentTime+.6);nx=AC.currentTime+.08;sp=0;clearInterval(TC);sched();TC=setInterval(sched,100)}
+ else if(AC){clearInterval(TC);MG.gain.cancelScheduledValues(AC.currentTime);MG.gain.setTargetAtTime(0,AC.currentTime,.25);setTimeout(function(){if(!mon)AC.suspend()},1500)}}catch(e){on=0}
+ mon=on;$("mu").setAttribute("aria-pressed",!!on);$("mu").textContent=on?"⏸ Oprește muzica":"♪ Pornește muzica"}
+$("mu").onclick=function(){mus(!mon)};$("vol").oninput=function(){if(mon&&MG)MG.gain.setTargetAtTime(+this.value,AC.currentTime,.1)};
+// Explicație: mai sus este muzică de lift generată în browser, cu pornire, oprire și volum.
+// BLOC 11, ajutător: uniq scoate duplicatele dintr-o listă.
+function uniq(a){return a.filter(function(x,i){return a.indexOf(x)==i})}
+// BLOC 12, livrare: DL0 = zile estimate pe categorie; dv calculează stoc și livrare, ad adaugă zile lucrătoare, dhtml și vhtml afișează „ajunge la timp” față de data ta.
+var DL0={tech:[1,3],gaming:[0,1],jocuri:[1,3],carti:[1,3],casa:[1,4],sport:[1,3],outdoor:[2,4],foto:[1,4],arta:[1,4],muzica:[2,5],exp:[0,1],stil:[1,3],birou:[1,3],pers:[4,8]};
+function dv(x,t){var it=x.it,r=(DL0[it.c]||[1,4]).slice(),st="Probabil pe stoc",cl="ok";
+ if(!it.q)return{lo:0,hi:0,st:"Îl faci tu, nu depinde de stoc",cl:"ok"};
+ if(it.c=="pers"){st="Se produce la comandă";cl="mid"}
+ else if(it.c=="exp"||/card/.test(it.n)){st="Disponibil imediat, trimis digital";r=[0,1]}
+ else if(it.p[0]>=2500){st="Posibil la comandă";r=[r[0]+3,r[1]+5];cl="mid"}
+ else if(t==2){st="De obicei pe stoc; modelele premium pot dura mai mult";r=[r[0]+1,r[1]+2];cl="mid"}
+ return{lo:r[0],hi:r[1],st:st,cl:cl}}
+function ad(n){var d=new Date();while(n>0){d.setDate(d.getDate()+1);var w=d.getDay();if(w>0&&w<6)n--}return d}
+function fd(d){return d.toLocaleDateString("ro-RO",{day:"numeric",month:"short"})}
+function dhtml(x,t){var v=dv(x,t),a=ad(v.lo),b=ad(v.hi),free=!x.it.q,
+ txt=free?"Poți face cadoul chiar azi":v.hi<=1&&v.lo===0?"Primești codul azi sau mâine":"Ajunge aproximativ "+(v.lo==v.hi?fd(a):fd(a)+" – "+fd(b)),
+ term=free?"":" · termen "+(v.lo==v.hi?v.lo:v.lo+"–"+v.hi)+" zile lucrătoare",ok="";
+ if(last&&last.date&&!free){ok=ad(v.hi+1)<=new Date(last.date+"T23:59:59")?'<br><b class="g">✔ Ajunge la timp</b>':'<br><b class="r">⚠ Poate întârzia: comandă imediat sau alege o variantă mai rapidă</b>'}
+ return'<p class="dv"><span class="dot '+v.cl+'"></span><b>'+esc(v.st)+'</b><br>'+txt+term+ok+sl(x)+'<br><small>Estimare orientativă; stocul și termenul exact se confirmă în magazin.</small></p>'}
+function vhtml(x,t){return vh0(x,t)+dhtml(x,t)}
+// Explicație: mai sus este muzica; jos sunt hobby-urile tale proprii. addH() face din ce scrii un buton selectat, hobs() adună toate hobby-urile alese, iar SY2 leagă cuvinte ca „pictură” sau „pescuit” de cadourile din catalog. Dacă niciun cadou din catalog nu se potrivește, run() creează două idei dedicate hobby-ului tău (accesorii și un curs).
+// BLOC 13: SY2 leagă cuvinte ca „pictură” sau „pescuit” de cuvinte din catalog, ca să găsească cadouri potrivite.
+var CU={},SY2={pictura:["desen","arta","creativ"],pictat:["desen","arta","creativ"],arta:["desen","arta","creativ"],dans:["muzica","petreceri","sport"],pescuit:["natura","aventura","camping"],calarie:["natura","sport","aventura"],inot:["sport","fitness"],schi:["sport","munte","aventura"],tenis:["sport"],baschet:["sport","baschet"],pian:["muzica","instrument"],chitara:["muzica","chitara","instrument"],vioara:["muzica","instrument"],anime:["filme","jocuri","colectie"],manga:["citit","carti","colectie"],podcast:["podcast","audio","muzica"],istorie:["citit","carti","literatura"],stiinta:["tehnologie","invatat","citit"],astronomie:["tehnologie","citit","invatat"],animale:["natura","casa"],caini:["natura","sport","aventura"],pisici:["casa","relaxare"],masini:["colectie","masini","tehnologie"],moto:["aventura","sport","calatorii"],gradinarit:["gradinarit","plante","natura"],bricolaj:["casa","tehnologie","creativ"],croitorie:["creativ","arta","moda"],bijuterii:["moda","stil","accesorii"],machiaj:["ingrijire","stil","moda"],vin:["vin","bautura","mancare"],bere:["bautura","prieteni"],cocktailuri:["bautura","petreceri"],meditatie:["relaxare","wellness","yoga"],scris:["scris","jurnal","creativ"],blog:["scris","creativ","content"],youtube:["youtube","content","video","creator"],tiktok:["tiktok","content","creator"],lego:["lego","constructii"],colectii:["colectie"],alergare:["alergare","fitness","sport"],box:["sport","fitness"],escalada:["sport","aventura","fitness"],camping:["camping","natura","aventura"]};
+// BLOC 13, hobby-uri proprii: addH transformă ce scrii într-un buton selectat, hobs adună toate hobby-urile alese.
+function addH(t){t.split(/[,;]+/).forEach(function(x){x=x.trim();var k=norm(x);if(!k)return;var b=document.querySelector('#hc .chip[data-k="'+k.replace(/["\\]/g,"")+'"]');
+ if(b){hs[k]=1;b.setAttribute("aria-pressed","true");return}
+ hs[k]=1;CU[k]=x;b=document.createElement("button");b.type="button";b.className="chip";b.dataset.k=k;b.setAttribute("aria-pressed","true");b.textContent=x+" ×";b.title="Apasă pentru a șterge";b.onclick=function(){delete hs[k];delete CU[k];b.remove()};$("hc").appendChild(b)})}
+function hobs(){var o=[];Object.keys(hs).filter(function(k){return hs[k]}).forEach(function(k){o.push(k);k.split(" ").forEach(function(w){if(w.length>3)o.push(w)})});return o}
+$("hadd").onclick=function(){addH($("hx").value);$("hx").value="";$("hx").focus()};$("hx").onkeydown=function(e){if(e.key=="Enter"){e.preventDefault();$("hadd").onclick()}};
+// Explicație: mai jos fiecare cadou primește propria imagine (emoji) după nume, nu după categorie. Astfel tastatura nu mai apare cu căști. Regulile se verifică în ordine, prima care se potrivește câștigă.
+var IR=[[/tastatur|mouse/i,"⌨️"],[/căști/i,"🎧"],[/hi-fi/i,"🎚️"],[/boxă/i,"🔊"],[/curs online/i,"🎓"],[/steam|playstation|consolă/i,"🎮"],[/societate/i,"🎲"],[/puzzle/i,"🧩"],[/lego/i,"🧱"],[/^roman/i,"📕"],[/e-reader/i,"📚"],[/cuțit/i,"🔪"],[/espressor|cafea/i,"☕"],[/ceai/i,"🍵"],[/ghete|minge/i,"⚽"],[/tricou/i,"👕"],[/smartwatch|brățară/i,"⌚"],[/gantere/i,"🏋️"],[/yoga/i,"🧘"],[/rucsac/i,"🎒"],[/hamac|cort/i,"⛺"],[/termos/i,"🥤"],[/instax/i,"📸"],[/mirrorless/i,"📷"],[/trepied/i,"🎥"],[/pictură|schiță/i,"🎨"],[/tabletă grafică/i,"🖊️"],[/tabletă de top/i,"📱"],[/ukulele/i,"🎸"],[/pickup/i,"💿"],[/concert/i,"🎟️"],[/adrenalin/i,"🏎️"],[/weekend/i,"🏨"],[/spa/i,"💆"],[/cină romantică/i,"🍽️"],[/plantă/i,"🪴"],[/ierburi/i,"🌿"],[/veioză/i,"💡"],[/parfum/i,"🧴"],[/portofel/i,"👛"],[/îngrijire/i,"🧼"],[/power bank/i,"🔋"],[/stilou/i,"✒️"],[/proiector/i,"📽️"],[/popcorn/i,"🍿"],[/bicicletă electrică/i,"🚲"],[/bicicletă/i,"🚴"],[/șah/i,"♟️"],[/tablou|canvas/i,"🖼️"],[/album/i,"📔"],[/video/i,"🎬"],[/sous-vide|air fryer/i,"🍳"],[/cocktail/i,"🍸"],[/patine|călărie/i,"🛼"],[/scrisoare/i,"💌"],[/playlist/i,"🎶"],[/cină gătită/i,"🍝"],[/zi surpriză/i,"🎈"],[/colaj/i,"📌"],[/ajutor/i,"🤝"],[/laptop/i,"💻"],[/dronă/i,"🚁"],[/ceas/i,"🕰️"],[/vacanță/i,"✈️"]];
+IR.unshift([/pescuit|pescar|lansetă|momeli/i,"🎣"],[/balon/i,"🎈"],[/lumânări/i,"🕯️"],[/pătur|pernă/i,"🛋️"],[/ochelari de soare/i,"🕶️"],[/colier|bijuterie|cutie de bijuterii/i,"💍"],[/telescop/i,"🔭"],[/trotinetă/i,"🛴"],[/cameră video/i,"🎥"],[/chitar/i,"🎸"],[/pian|keyboard/i,"🎹"],[/microfon/i,"🎤"],[/lanternă/i,"🔦"],[/sac de dormit/i,"🛌"],[/box/i,"🥊"],[/tenis|badminton/i,"🎾"],[/baschet/i,"🏀"],[/înot/i,"🏊"],[/alergare/i,"👟"],[/grătar/i,"🍖"],[/vin/i,"🍷"],[/paste/i,"🍝"],[/teatru|operă/i,"🎭"],[/dans/i,"💃"],[/ceramic/i,"🏺"],[/rubik/i,"🧊"],[/uno|dobble|cărți \(/i,"🃏"],[/robot|stem/i,"🤖"],[/umbrelă \/ cort|umbrelă rezistentă/i,"☂️"],[/papuci/i,"🩴"],[/fular/i,"🧣"],[/rucsac/i,"🎒"],[/manga/i,"📖"],[/atlas/i,"🗺️"],[/hartă/i,"🗺️"]);
+// BLOC 14: ico alege emoji-ul cadoului după nume, prima regulă potrivită câștigă.
+function ico(it){if(it.e)return it.e;for(var i=0;i<IR.length;i++)if(IR[i][0].test(it.n))return IR[i][1];return EM[it.c]||"🎁"}
+// Explicație: mai sus sunt hobby-urile proprii și imaginile; mai jos sunt tipul de produse (noi, reducere, second-hand), nota despre filtrul de preț (pn), calendarul reducerilor viitoare (sev și sl) și lista cu site-urile magazinelor. Reducerile reale nu pot fi știute dinainte: calendarul arată perioadele în care magazinele fac de obicei oferte.
+var COND="all";
+[["all","Oricare"],["new","Noi"],["sale","La reducere"],["used","Second-hand, puțin folosite"]].forEach(function(o){var b=document.createElement("button");b.type="button";b.className="chip";b.setAttribute("aria-pressed",o[0]==COND);b.textContent=o[1];b.onclick=function(){COND=o[0];$("cd").querySelectorAll(".chip").forEach(function(z){z.setAttribute("aria-pressed",z==b)})};$("cd").appendChild(b)});
+// BLOC 15, extra: pn explică filtrul de preț, sev și sl arată reducerile viitoare, iar mai jos se completează lista site-urilor magazinelor.
+function pn(it,lo,hi){var c=(last&&last.cond)||"all",u=usedOK(it),m="Filtrul de preț ("+(c=="used"&&u?"până la "+cv(hi):cv(lo)+"–"+cv(hi))+" "+CC+") se aplică automat pe Google Shopping, OLX și Vinted; pe eMAG și pe celelalte magazine setează-l manual pe pagină.";
+ if(c=="used"&&!u)m="Acest cadou nu se găsește second-hand, așa că am pus magazinele cu produse noi. "+m;
+ if((c=="used"||c=="all")&&u)m+=" La second-hand verifică starea, cere poze și întreabă de garanție.";return CT!="ro"?"Prețurile sunt aproximative, convertite din RON. Filtrul de preț ("+cv(lo)+"–"+cv(hi)+" "+CC+") se aplică automat pe Amazon, Google Shopping, eBay și Vinted; pe celelalte magazine setează-l manual.":m}
+function sev(){var n=new Date(),y=n.getFullYear(),o=[];[y,y+1].forEach(function(Y){var d=1,t=0;while(t<4){if(new Date(Y,10,d).getDay()==4)t++;if(t<4)d++}
+ o.push([new Date(Y,10,11),"11.11"],[new Date(Y,10,d+1),"Black Friday"],[new Date(Y,10,d+4),"Cyber Monday"],[new Date(Y,11,1),"reducerile de Crăciun"],[new Date(Y,0,7),"reducerile de iarnă"],[new Date(Y,2,1),"reducerile de Mărțișor și 8 Martie"],[new Date(Y,6,1),"reducerile de vară"])});
+ return o.filter(function(e){return e[0]>n}).sort(function(a,b){return a[0]-b[0]}).slice(0,2)}
+function sl(x){if(!x.it.q||/exp|pers|hob/.test(x.it.c)||(last&&last.cond=="used"))return"";var E=sev(),dt=last&&last.date?new Date(last.date+"T23:59:59"):null,v="";
+ var t=E.map(function(e){return e[1]+" ("+fd(e[0])+", peste "+Math.ceil((e[0]-new Date())/864e5)+" zile)"}).join(" · ");
+ if(dt)v=E[0][0]<=dt?" Dacă nu te grăbești, merită să aștepți.":" Reducerile vin după data ta, așa că nu aștepta.";
+ return'<br><small>📅 Reduceri probabile: '+esc(t)+'.'+v+' Orientativ, nu garantat.</small>'}
+$("sit").innerHTML=[["eMAG","https://www.emag.ro/"],["Altex","https://altex.ro/"],["Flanco","https://www.flanco.ro/"],["PC Garage","https://www.pcgarage.ro/"],["Elefant","https://www.elefant.ro/"],["Cărturești","https://carturesti.ro/"],["Decathlon","https://www.decathlon.ro/"],["Hervis","https://www.hervis.ro/"],["Intersport","https://www.intersport.ro/"],["IKEA","https://www.ikea.com/ro/ro/"],["Dedeman","https://www.dedeman.ro/"],["JYSK","https://jysk.ro/"],["Fashion Days","https://www.fashiondays.ro/"],["Answear","https://answear.ro/"],["Zalando","https://www.zalando.ro/"],["Notino","https://www.notino.ro/"],["Sephora","https://www.sephora.ro/"],["Etsy","https://www.etsy.com/ro/"],["Smartbox","https://www.smartbox.com/ro/"],["Wonderbox","https://www.wonderbox.ro/"],["iabilet","https://www.iabilet.ro/"],["Udemy","https://www.udemy.com/"],["Google Shopping","https://www.google.com/shopping"],["OLX (second-hand)","https://www.olx.ro/"],["Vinted (second-hand)","https://www.vinted.ro/"]].map(function(l){return'<a href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>'}).join("");
+showSaved();
+
+/* ===== PWA: service worker, instalare, offline ===== */
+// BLOC 16: PWA = aplicația instalabilă: înregistrează service worker-ul (offline), butonul „Instalează” și avertizarea fără internet.
+(function(){
+ if("serviceWorker" in navigator && location.protocol!=="file:"){
+  window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
+ }
+ var dp=null,ins=document.getElementById("ins");
+ window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dp=e;ins.style.display="inline-block"});
+ ins.onclick=function(){if(!dp)return;dp.prompt();dp.userChoice.finally(function(){dp=null;ins.style.display="none"})};
+ window.addEventListener("appinstalled",function(){ins.style.display="none"});
+ var standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+ var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+ var seen=false;try{seen=localStorage.getItem("pf_ios_tip")}catch(e){}
+ if(ios&&!standalone&&!seen){
+  var t=document.createElement("div");t.className="ios-tip";
+  t.innerHTML='<button class="btn" type="button">OK</button>Instalează aplicația: apasă <b>Partajează</b> (pătratul cu săgeată), apoi <b>Adaugă pe ecranul de pornire</b>.';
+  t.querySelector("button").onclick=function(){t.remove();try{localStorage.setItem("pf_ios_tip","1")}catch(e){}};
+  document.body.appendChild(t);
+ }
+ var off=null;
+ function probe(){return fetch("/api/ping?"+Date.now(),{cache:"no-store"}).then(function(){return true},function(){return false})}
+ function net(){probe().then(function(ok){if(!ok&&!off){off=document.createElement("div");off.className="offline";off.textContent="Fără conexiune la internet";document.body.appendChild(off)}else if(ok&&off){off.remove();off=null}})}
+ addEventListener("online",net);addEventListener("offline",net);
+ if(navigator.vibrate)document.addEventListener("click",function(e){if(e.target.closest&&e.target.closest(".chip,.go"))navigator.vibrate(8)});
+})();
+
+/* ===== navigare pe taburi (doar pe telefon) ===== */
+// BLOC 17: taburile de pe telefon (Căutare, Salvate, Experiențe) și comutarea între ele.
+(function(){
+ var T="search",g=function(i){return document.getElementById(i)},tabs=document.querySelectorAll(".tabs button"),ph=g("ph");
+ function badge(){var n=Object.keys(sav).length;g("sb").textContent=n||""}
+ function setTab(t,keep){T=t;document.body.dataset.tab=t;
+  tabs.forEach(function(b){b.setAttribute("aria-current",b.dataset.t==t?"page":"false")});
+  var empty=(t=="ideas"&&g("out").hidden)||(t=="saved"&&g("sv").hidden);ph.hidden=!empty;
+  if(empty){ph.querySelector("h2").textContent=t=="ideas"?"Nicio idee încă":"Nimic salvat";
+   ph.querySelector("p").textContent=t=="ideas"?"Completează profilul persoanei și primești idei de cadouri.":"Apasă „Salvează” la un cadou ca să-l găsești aici.";
+   g("phb").style.display=t=="ideas"?"":"none"}
+  if(!keep)scrollTo(0,0)}
+ tabs.forEach(function(b){b.onclick=function(){setTab(b.dataset.t)}});
+ g("phb").onclick=function(){setTab("search")};
+ var _g=go2;go2=function(n){_g(n);setTab("search")};
+ var _f=find;find=function(){var p=last;_f();if(last!==p)setTab("ideas")};
+ var _s=showSaved;showSaved=function(){_s();badge();if(T=="saved")setTab("saved",1)};
+ badge();setTab("search",1);
+})();
+
+/* ===== verificare linkuri către magazine (prin /api/check) ===== */
+// BLOC 18: după ce apar linkurile, le trimite pe rând la /api/check și pune ✓, ⚠ sau ✗ lângă fiecare.
+(function(){
+ var API="/api/check?u=",c={},q=[],busy=0,off=0,tm,
+ OK=/(^|\.)(emag\.ro|altex\.ro|flanco\.ro|pcgarage\.ro|elefant\.ro|decathlon\.ro|carturesti\.ro|olx\.ro|vinted\.ro)$/;
+ function ask(u){if(c[u])return c[u];return c[u]=fetch(API+encodeURIComponent(u)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){return j.s})}
+ function mark(a,s,t){var i=a.querySelector(".lk");if(!i)return;i.className="lk "+({ok:"ok",empty:"em",dead:"no"}[s]||"w");
+  i.textContent=s=="ok"?"✓":s=="empty"?"⚠":s=="dead"?"✗":"";i.title=t||{ok:"Pagina are rezultate",empty:"Posibil fără rezultate pentru acest preț",dead:"Pagina nu există"}[s]||"";
+  if(s=="dead")a.classList.add("dead");if(!i.textContent)i.remove()}
+ function work(a){busy++;var u=a.href;
+  ask(u).then(function(s){
+   if(s=="empty"&&/\/pret,intre-/.test(u)){var u2=u.replace(/\/pret,intre-[^/?#]*/,"");
+    return ask(u2).then(function(s2){if(s2=="ok"){a.href=u2;mark(a,"ok","Fără filtru de preț: cu filtrul nu erau rezultate")}else mark(a,s)})}
+   mark(a,s)}).catch(function(){off=1;q=[];document.querySelectorAll(".lk.w").forEach(function(i){i.remove()})})
+  .then(function(){busy--;pump()})}
+ function pump(){while(!off&&busy<3&&q.length)work(q.shift())}
+ function scan(){if(off)return;document.querySelectorAll(".links a[href]").forEach(function(a){if(a.dataset.v)return;var u;try{u=new URL(a.href)}catch(e){return}
+  if(!OK.test(u.hostname)||(u.pathname.length<2&&!u.search))return;a.dataset.v=1;a.insertAdjacentHTML("afterbegin",'<i class="lk w">…</i>');q.push(a)});pump()}
+ new MutationObserver(function(){clearTimeout(tm);tm=setTimeout(scan,250)}).observe(document.body,{childList:true,subtree:true});
+})();
+/* ===== experiențe lângă tine: OpenStreetMap (descoperire) + Google Places prin /api/places (recenzii, opțional) ===== */
+// BLOC 19, experiențe lângă tine: caută locuri în OpenStreetMap după locația ta, tipul ales și rază, apoi arată cardurile cu informații.
+(function(){
+ var g=function(i){return document.getElementById(i)},pos=null,rad=50,sel={water:1,sky:1,kart:1,escape:1},CU=[],
+// Experiențe: catalogul tipurilor = [cheie, icon, nume, filtre OpenStreetMap, termen pentru căutarea alternativă, durată, preț orientativ, sfat]. Aici adaugi tipuri noi.
+D=[["water","🌊","Parc acvatic",['["leisure"="water_park"]'],"parc acvatic","3–6 ore","60–150 RON/persoană","Vino dimineața, în zilele de lucru; copiii mici doar cu însoțitor."],
+["sky","🪂","Parașutism / zbor",['["sport"~"skydiving|parachuting|gliding|paragliding|ballooning"]'],"parasutism","2–4 ore (saltul durează câteva minute)","800–1.500 RON salt tandem; parapantă 300–600","Cere certificat medical și limita de greutate; rezervă cu 1–2 săptămâni, depinde de vreme."],
+["kart","🏎️","Karting",['["sport"="karting"]'],"karting","30–60 min","50–120 RON/sesiune","Înălțime minimă de obicei 140–150 cm; rezervă pentru grup."],
+["escape","🔐","Escape room",['["leisure"="escape_game"]'],"escape room","60–90 min","60–120 RON/persoană","Rezervă cu 1–3 zile înainte, pentru 2–6 persoane; întreabă nivelul de dificultate."],
+["paint","🎯","Paintball / airsoft",['["sport"~"paintball|airsoft"]'],"paintball","2–3 ore","80–200 RON/persoană","Vârstă minimă ~12–14 ani; haine vechi; grupuri de 8+."],
+["climb","🧗","Escaladă / trambuline",['["sport"="climbing"]','["leisure"="trampoline_park"]'],"escalada","1–2 ore","40–90 RON/intrare","Echipament de închiriat; instructaj pentru începători."],
+["spa","💆","Spa / saună",['["leisure"="sauna"]','["amenity"="spa"]'],"spa","2–4 ore","100–400 RON/persoană","Rezervă în weekend; întreabă de pachetele pentru doi și vârsta minimă."],
+["zoo","🦁","Zoo / parc distracții",['["tourism"~"zoo|theme_park"]'],"zoo","3–5 ore","30–100 RON/bilet","Verifică programul de sezon; biletele online sunt adesea mai ieftine."],
+["bowl","🎳","Bowling",['["leisure"="bowling_alley"]'],"bowling","1–2 ore","40–100 RON/pistă/oră","Rezervă pista în weekend; încălțămintea se închiriază."],
+["horse","🐎","Echitație",['["leisure"="horse_riding"]','["sport"="equestrian"]'],"echitatie","1–2 ore","100–250 RON/ședință","Cere o ședință de probă; casca se închiriază."],
+["museum","🏛️","Muzee",['["tourism"="museum"]'],"muzeu","1–3 ore","10–40 RON/bilet","Verifică ziua liberă și reducerile pentru elevi și studenți."],
+["cinema","🎬","Cinema",['["amenity"="cinema"]'],"cinema","2–3 ore","30–50 RON/bilet","Cumpără online; în zilele de lucru e mai ieftin."],
+["theatre","🎭","Teatru / operă",['["amenity"="theatre"]'],"teatru","2–3 ore","40–200 RON/bilet","Biletele la spectacolele populare se iau cu săptămâni înainte."],
+["ice","⛸️","Patinoar",['["leisure"="ice_rink"]'],"patinoar","1–2 ore","20–60 RON cu patine","Funcționează mai ales iarna; ia mănuși."],
+["golf","⛳","Golf / minigolf",['["leisure"="miniature_golf"]','["leisure"="golf_course"]'],"minigolf","1–2 ore","20–60 RON minigolf; golful costă mai mult","Minigolful e bun și pentru copii; golful cere rezervare."],
+["arch","🏹","Tir cu arcul / tir sportiv",['["sport"~"archery|shooting"]'],"tir cu arcul","1–2 ore","50–150 RON/ședință","Instructor pentru începători; vârstă minimă ~10–12 ani."],
+["laser","🔫","Laser tag",['["sport"="laser_tag"]'],"laser tag","1–2 ore","40–80 RON/persoană","Mai distractiv în grup de 6+."],
+["rope","🌲","Parc de aventură / tiroliană",['["sport"="climbing_adventure"]'],"parc de aventura","2–4 ore","60–150 RON","Alege traseul după înălțime; haine comode."],
+["arcade","🕹️","Sală de jocuri",['["leisure"="amusement_arcade"]'],"sala de jocuri","1–2 ore","20–100 RON","Potrivit pentru grupuri și copii mari."],
+["terme","♨️","Terme / băi",['["amenity"="public_bath"]','["natural"="hot_spring"]'],"terme","3–5 ore","50–150 RON/intrare","Ia costum de baie și papuci."],
+["kayak","🛶","Caiac / rafting",['["sport"~"canoe|kayak|rafting"]'],"caiac","2–4 ore","100–300 RON","Ia haine de schimb; depinde de nivelul apei."],
+["ski","⛷️","Ski / snowboard",['["landuse"="winter_sports"]','["sport"="skiing"]'],"partie schi","o zi","150–400 RON skipass + echipament","Doar iarna; ia skipassul online."],
+["botanic","🌿","Grădină botanică",['["leisure"="garden"]["garden:type"="botanical"]'],"gradina botanica","1–3 ore","10–30 RON","Cel mai frumos primăvara."],
+["aqua","🐠","Acvariu",['["tourism"="aquarium"]'],"acvariu","1–2 ore","30–80 RON","Bun pentru copii; verifică orele de hrănire."],
+["castle","🏰","Castele / cetăți",['["historic"="castle"]'],"castel","1–3 ore","10–50 RON","Program de sezon; vezi dacă sunt tururi ghidate."],
+["motor","🏁","Circuit auto / off-road",['["sport"="motor"]'],"circuit auto","1–3 ore","150–600 RON","Unele activități cer permis; rezervă din timp."],
+["wine","🍷","Cramă / degustare vin",['["craft"="winery"]','["tourism"="wine_cellar"]'],"crama","1–2 ore","50–200 RON/persoană","Rezervă degustarea; nu conduce după."],
+["fish","🎣","Pescuit sportiv",['["leisure"="fishing"]'],"pescuit","3–8 ore","50–200 RON/zi","Verifică dacă ai nevoie de permis."],
+["camp","⛺","Camping / glamping",['["tourism"="camp_site"]'],"camping","un weekend","50–400 RON/noapte","Rezervă vara; verifică dotările."]];
+// Experiențe: mk transformă filtrele în testul „acest loc e de tipul X?” pe baza etichetelor din hartă.
+function mk(fs){var P=fs.map(function(f){var r=[],m,re=/\["([^"]+)"(=|~)"([^"]+)"\]/g;while(m=re.exec(f))r.push([m[1],m[2],m[3]]);return r});
+ return function(t){return P.some(function(cs){return cs.every(function(c){var v=t[c[0]];return v!=null&&(c[1]=="="?v==c[2]:new RegExp(c[2]).test(v))})})}}
+var C=D.map(function(a){return{k:a[0],i:a[1],n:a[2],f:a[3],tm:mk(a[3]),nq:a[4],d:a[5],p:a[6],s:a[7]}});
+function xe(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+// Experiențe: kind ghicește tipul unui loc din etichetele lui; xe protejează textul în HTML.
+function kind(t){var c=C.filter(function(c){return sel[c.k]&&c.tm(t)})[0];return c?c.k:""}
+// Experiențe: km calculează distanța în linie dreaptă între două puncte (formula Haversine).
+function km(a,b,c,d){var R=6371,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,q=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)*Math.sin(y/2);return 2*R*Math.asin(Math.sqrt(q))}
+// Experiențe: chips desenează butoanele cu tipuri și „Selectează tot / Șterge selecția”.
+ var cb=g("xcat");
+function chips(){cb.innerHTML="";C.forEach(function(c){var b=document.createElement("button");b.type="button";b.className="xc";b.setAttribute("aria-pressed",sel[c.k]?"true":"false");b.textContent=c.i+" "+c.n;
+  b.onclick=function(){sel[c.k]=!sel[c.k];b.setAttribute("aria-pressed",sel[c.k]?"true":"false")};cb.appendChild(b)})}chips();
+g("xall").onclick=function(){C.forEach(function(c){sel[c.k]=1});chips()};g("xnone").onclick=function(){C.forEach(function(c){sel[c.k]=0});chips()};
+// Experiențe: addCU adaugă o experiență scrisă de tine, o caută după nume (cu sau fără diacritice) și o tratează ca pe un tip normal.
+function addCU(){var v=g("xcu").value.trim().slice(0,40);if(!v)return;g("xcu").value="";
+ var rx=v.toLowerCase().replace(/[^a-z0-9ăâîșşțţ ]/g,"").replace(/[ăâa]/g,"[aăâ]").replace(/[îi]/g,"[iî]").replace(/[șşs]/g,"[sșş]").replace(/[țţt]/g,"[tțţ]").trim();if(!rx)return;
+ var k="c"+(CU.length+1);CU.push(k);sel[k]=1;C.push({k:k,i:"⭐",n:v,f:['["name"~"'+rx+'",i]'],tm:function(t){return new RegExp(rx,"i").test(t.name||"")},nq:v,d:"",p:"",s:"Verifică programul și prețul pe site; cere ofertă pentru grup."});chips()}
+g("xcua").onclick=addCU;g("xcu").onkeydown=function(e){if(e.key=="Enter"){e.preventDefault();addCU()}};
+// Experiențe: alegerea distanței (butoane și glisor) și salvarea locației (setPos).
+g("xrad").onclick=function(e){var b=e.target.closest("[data-r]");if(b)setR(+b.dataset.r)};g("xr").oninput=function(){setR(+this.value)};
+ function setR(v){rad=v;g("xr").value=v;g("xrv").textContent=v+" km";[].forEach.call(g("xrad").children,function(x){x.setAttribute("aria-pressed",+x.dataset.r==v?"true":"false")})}
+ function setPos(la,lo,label){pos={la:la,lo:lo,c:/^Locația/.test(label)?"":label.split(",")[0]};g("xpos").textContent="📍 "+label}
+// Experiențe: locația vine din GPS (butonul de localizare) sau din oraș scris, căutat în Nominatim (xcb).
+ g("xloc").onclick=function(){if(!navigator.geolocation){g("xs").textContent="Browserul nu permite localizarea. Scrie orașul.";return}
+  g("xs").textContent="Aștept permisiunea…";
+  navigator.geolocation.getCurrentPosition(function(p){setPos(p.coords.latitude,p.coords.longitude,"Locația ta (aproximativ)");g("xs").textContent=""},
+   function(e){g("xs").textContent=e.code==1?"Ai refuzat localizarea. Poți scrie orașul mai jos.":"Nu am putut afla locația. Scrie orașul."},{timeout:12000,maximumAge:600000})};
+ g("xcb").onclick=function(){var q=g("xcity").value.trim();if(!q)return;g("xs").textContent="Caut orașul…";
+  fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=ro&countrycodes=ro&q="+encodeURIComponent(q)).then(function(r){return r.json()}).then(function(j){
+   if(!j.length){g("xs").textContent="Nu am găsit orașul.";return}setPos(+j[0].lat,+j[0].lon,j[0].display_name.split(",").slice(0,2).join(","));g("xs").textContent=""}).catch(function(){g("xs").textContent="Căutarea orașului a eșuat."})};
+// Experiențe: enrich cere la /api/places nota și recenziile Google pentru primele locuri (opțional, doar cu cheie).
+ var enrichOff=0;
+ function enrich(list){var q=list.slice(0,8),n=0;function next(){if(enrichOff||n>=q.length)return;var it=q[n++];
+  fetch("/api/places?n="+encodeURIComponent(it.name)+"&lat="+it.la+"&lng="+it.lo).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){
+   var el=document.querySelector('[data-x="'+it.id+'"]');if(el&&j.rating){var pl={PRICE_LEVEL_INEXPENSIVE:"$",PRICE_LEVEL_MODERATE:"$$",PRICE_LEVEL_EXPENSIVE:"$$$",PRICE_LEVEL_VERY_EXPENSIVE:"$$$$"}[j.price]||"";
+    el.innerHTML="⭐ <b>"+j.rating.toFixed(1)+"</b> ("+j.n+" recenzii)"+(pl?" · nivel preț "+pl:"")}}).catch(function(){enrichOff=1}).then(next)}
+  next();next();next()}
+// Experiențe: Overpass este baza de date a hărții. Întâi se încearcă serverul tău (viaServer), apoi 3 servere direct din browser (direct); overpass le combină.
+ var EP=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://maps.mail.ru/osm/tools/overpass/api/interpreter"],why="";
+ function direct(qy,sig){var i=0;why="";function go(){if(i>=EP.length)return Promise.reject(new Error(why||"necunoscut"));var u=EP[i++];
+  return fetch(u,{method:"POST",body:"data="+encodeURIComponent(qy),headers:{"Content-Type":"application/x-www-form-urlencoded"},signal:sig})
+  .then(function(r){if(r.status==429){why="prea multe cereri";return go()}if(!r.ok){why="eroare server "+r.status;return go()}return r.json().catch(function(){why="răspuns invalid";return go()})},
+   function(e){why=e&&e.name=="AbortError"?"timp expirat":"conexiune blocată";return go()})}
+  return go()}
+ function viaServer(qy,sig){return fetch("/api/scan",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({q:qy}),signal:sig}).then(function(r){if(!r.ok)throw new Error("fără server");return r.json()})}
+ function overpass(qy,sig){return viaServer(qy,sig).catch(function(){if(sig.aborted)throw new Error("timp expirat");return direct(qy,sig)})}
+// Experiențe: fromOv transformă răspunsul hărții în locuri (nume, coordonate, tip, etichete); nomi este căutarea alternativă prin Nominatim.
+ function fromOv(j){var o=[];(j.elements||[]).forEach(function(e){var t=e.tags||{};if(!t.name)return;var a=e.lat||(e.center&&e.center.lat),b=e.lon||(e.center&&e.center.lon);if(!a||!b)return;var k=kind(t);if(!k)return;o.push({name:t.name,la:a,lo:b,k:k,t:t})});return o}
+ function nomi(ks,say){var dl=rad/111,dn=rad/(111*Math.cos(pos.la*Math.PI/180)),vb=[pos.lo-dn,pos.la+dl,pos.lo+dn,pos.la-dl].map(function(x){return x.toFixed(4)}).join(","),jobs=[],res=[],i=0,fails=0;
+  ks.forEach(function(c){jobs.push([c.k,c.nq])});jobs=jobs.slice(0,12);
+  return new Promise(function(ok){(function step(){if(i>=jobs.length){res.fails=fails;res.jobs=jobs.length;return ok(res)}var jb=jobs[i++];say("Căutare alternativă "+i+"/"+jobs.length+"…");
+   fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=20&accept-language=ro&bounded=1&viewbox="+vb+"&q="+encodeURIComponent(jb[1])).then(function(r){if(!r.ok)throw 0;return r.json()})
+   .then(function(a){a.forEach(function(x){res.push({name:x.name||String(x.display_name).split(",")[0],la:+x.lat,lo:+x.lon,k:jb[0],t:{}})})}).catch(function(){fails++}).then(function(){setTimeout(step,1100)})})()})}
+// Experiențe: show elimină dublurile, sortează după distanță și desenează cardul cu adresă, telefon, program, preț, durată, sfat și linkuri.
+ function show(items,alt){var seen={},out=[];
+  items.forEach(function(x){var id=x.name+"|"+x.la.toFixed(3)+"|"+x.lo.toFixed(3);if(seen[id])return;seen[id]=1;x.d=km(pos.la,pos.lo,x.la,x.lo);if(x.d<=rad*1.05)out.push(x)});
+  out.sort(function(a,b){return a.d-b.d});out=out.slice(0,40);out.forEach(function(x,i){x.id=i});
+  if(!out.length){g("xs").textContent="Nu am găsit locuri în raza aleasă. Datele din hartă nu sunt complete: mărește distanța sau alege alt tip.";return}
+  g("xs").textContent=out.length+" locuri găsite, de la cel mai apropiat."+(alt?" (Căutare alternativă: pot lipsi locuri.)":"")+" Distanța e în linie dreaptă. Datele (adresă, telefon, program) vin din OpenStreetMap și pot lipsi sau fi vechi: confirmă pe site sau la telefon.";
+  var ico={};C.forEach(function(c){ico[c.k]=c});var oh={Mo:"Lu",Tu:"Ma",We:"Mi",Th:"Jo",Fr:"Vi",Sa:"Sâ",Su:"Du",PH:"sărbători",off:"închis"};
+  function row(i,l,v){return v?'<div class="xm">'+i+" <b>"+l+":</b> "+v+"</div>":""}
+  function lk(h,t){return'<a target="_blank" rel="noopener" href="'+h+'">'+t+"</a>"}
+  g("xres").innerHTML=out.map(function(x){var c=ico[x.k],t=x.t||{},city=t["addr:city"]||pos.c||"",nm=x.name+" "+city,q=encodeURIComponent(x.name+" "+x.la.toFixed(4)+","+x.lo.toFixed(4));
+   var w=t.website||t["contact:website"]||t.url||"",web=w?(/^https?:\/\//i.test(w)?w:"https://"+w):"",ph=t.phone||t["contact:phone"]||"",em=t.email||t["contact:email"]||"",fb=t["contact:facebook"]||t.facebook||"",
+    ad=[t["addr:street"]&&(t["addr:street"]+" "+(t["addr:housenumber"]||"")),t["addr:city"]].filter(Boolean).join(", "),
+    pr=t.charge?xe(t.charge):t.fee=="no"?"gratuit":t.fee=="yes"?"cu taxă (vezi site)":"",
+    hrs=t.opening_hours?xe(t.opening_hours.replace(/\b(Mo|Tu|We|Th|Fr|Sa|Su|PH|off)\b/g,function(m){return oh[m]})):"";
+   var site=web?lk(xe(web),"🌐 Site oficial"):lk("https://www.google.com/search?q="+encodeURIComponent(nm+" site oficial"),"🌐 Găsește site-ul");
+   return'<div class="xi"><b>'+c.i+" "+xe(x.name)+'</b><div class="xm">~'+Math.round(x.d)+" km · "+xe(c.n)+'</div>'+
+    row("📍","Adresă",ad?xe(ad):"nu e în hartă: vezi Traseu")+row("📞","Telefon",ph?lk("tel:"+xe(ph.split(";")[0].replace(/\s/g,"")),xe(ph)):"nu e în hartă: vezi site sau Google Maps")+row("🕒","Program",hrs||"vezi pe site")+
+    '<div class="xmx">'+row("💰","Preț",(pr?pr+" · ":"")+(c.p?"orientativ: "+xe(CC=="RON"?c.p:c.p.replace(/\d[\d.]*/g,function(n){return cv(+n.replace(".",""))}).replace(/RON/g,CC)):"vezi pe site"))+row("⏱️","Durată",xe(c.d))+row("💡","Bine de știut",xe(c.s))+row("✉️","Email",em?lk("mailto:"+xe(em),xe(em)):"")+row("♿","Acces scaun rotile",{yes:"da",limited:"parțial",no:"nu"}[t.wheelchair]||"")+row("ℹ️","Detalii",t.description?xe(t.description):"")+'</div><button type="button" class="xmore">Preț, durată, sfaturi ▾</button>'+
+    '<div class="xr" data-x="'+x.id+'">⭐ Recenzii: vezi pe Google Maps</div><div class="xl">'+site+lk("https://www.google.com/search?q="+encodeURIComponent(c.n+" "+nm+" rezervare bilete preț"),"🎟️ Rezervă / bilete")+
+    lk("https://www.google.com/maps/dir/?api=1&destination="+x.la+","+x.lo,"🧭 Traseu")+lk("https://www.google.com/maps/search/?api=1&query="+q,"⭐ Recenzii")+(fb?lk(xe(/^http/.test(fb)?fb:"https://"+fb),"👍 Facebook"):"")+"</div></div>"}).join("");
+  enrich(out)}
+// Experiențe: butonul „Scanează zona” construiește interogarea pentru tipurile alese, o trimite și afișează rezultatul sau eroarea.
+ g("xgo").onclick=function(){
+  if(!pos){g("xs").textContent="Mai întâi alege locația (buton sau oraș).";return}
+  var ks=C.filter(function(c){return sel[c.k]});if(!ks.length){g("xs").textContent="Alege cel puțin un tip de experiență.";return}
+  var la=pos.la.toFixed(2),lo=pos.lo.toFixed(2),R=rad*1000,body="";
+  ks.forEach(function(c){c.f.forEach(function(s){body+="nwr"+s+"(around:"+R+","+la+","+lo+");"})});
+  var qy="[out:json][timeout:40];("+body+");out center 2500;",say=function(t){g("xs").textContent=t};
+  say("Scanez zona"+(rad>100||ks.length>8?" (poate dura)":"")+"…");g("xgo").disabled=true;g("xres").innerHTML="";
+  var ctl=new AbortController(),to=setTimeout(function(){ctl.abort()},45000);
+  overpass(qy,ctl.signal).then(function(j){clearTimeout(to);return{items:fromOv(j),alt:0}},function(e){clearTimeout(to);
+   say("Harta principală nu răspunde ("+(e.message||"eroare")+"). Încerc căutarea alternativă…");
+   return nomi(ks,say).then(function(a){if(!a.length&&a.fails==a.jobs)throw new Error((e.message||"eroare")+"; căutarea alternativă e blocată");return{items:a,alt:1}})})
+  .then(function(r){show(r.items,r.alt)})
+  .catch(function(e){g("xs").textContent="Scanarea a eșuat: "+(e.message||"necunoscut")+". "+(/blocat/.test(e.message)?"Verifică dacă o extensie sau Brave Shields blochează site-ul, apoi încearcă din nou.":"Încearcă din nou peste un minut sau micșorează distanța.")})
+  .then(function(){g("xgo").disabled=false})};
+ /* data „când ai nevoie de cadou” nu poate fi în trecut */
+ var dl=g("dl");function tdy(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+ function fixd(){var m=tdy();dl.min=m;if(dl.value&&dl.value<m){dl.value=m;g("erd").hidden=false}else if(dl.value)g("erd").hidden=true}
+ /* telefon: butonul „Preț, durată, sfaturi” deschide sau închide restul informațiilor din card */
+ g("xres").addEventListener("click",function(e){var b=e.target.closest(".xmore");if(!b)return;var c=b.closest(".xi");c.classList.toggle("open");b.textContent=c.classList.contains("open")?"Ascunde detaliile ▴":"Preț, durată, sfaturi ▾"});
+ fixd();dl.addEventListener("change",fixd);dl.addEventListener("focus",fixd);document.addEventListener("visibilitychange",fixd);
+})();
+
+/* BLOC 20, țara: o singură alegere (sus) schimbă limba, magazinele și moneda. Limba vine din Google Website Translator (traducere automată); etichetele grupurilor din liste (optgroup) le traduc eu, pentru că Google nu le atinge. Cursul valutar vine de la open.er-api.com, cu valori de rezervă. */
+(function(){
+var G={us:"en",uk:"en",es:"es",fr:"fr",in:"hi",cn:"zh-CN"},LI={us:1,uk:1,cn:2,in:3,es:4,fr:5},ct=$("ctry"),SH=$("sit").innerHTML,
+CUR={ro:["RON",1],us:["USD",.23],uk:["GBP",.13],es:["EUR",.2],fr:["EUR",.2],in:["INR",18.5],cn:["CNY",1.55]},
+OG={"Aproape de tine":["Close to you","离你近的人","आपके करीबी","Cercanos","Proches"],"Familie":["Family","家人","परिवार","Familia","Famille"],"Serviciu și vecinătate":["Work and neighbors","工作与邻里","काम और पड़ोस","Trabajo y vecinos","Travail et voisinage"],"Aniversări":["Birthdays","纪念日","जन्मदिन और वर्षगाँठ","Cumpleaños y aniversarios","Anniversaires"],"Sărbători":["Holidays","节日","त्योहार","Fiestas","Fêtes"],"Momente din viață":["Life moments","人生时刻","जीवन के पल","Momentos de la vida","Moments de vie"],"Gesturi":["Gestures","心意","भावनाएँ","Gestos","Gestes"]};
+try{CT=localStorage.getItem("pf-ct")||"ro"}catch(e){}if(!CUR[CT])CT="ro";
+function ck(v,x){document.cookie="googtrans="+v+"; path=/"+(x||"");document.cookie="googtrans="+v+"; path=/; domain="+location.hostname+(x||"")}
+var X=CTRY[CT];$("sit").innerHTML=X?X.s.concat(X.e,X.u).map(function(a){return'<a href="'+new URL(a[1]).origin+'/" target="_blank" rel="noopener">'+a[0]+"</a>"}).join(""):SH;
+CC=CUR[CT][0];FX=CUR[CT][1];$("bcur").textContent=CC;if(CC!="RON"&&$("bud").value=="200")$("bud").value=cv(200);bchips();
+if(CC!="RON")fetch("https://open.er-api.com/v6/latest/RON").then(function(r){return r.json()}).then(function(j){var r=j&&j.rates&&j.rates[CC];if(r){FX=r;bchips()}}).catch(function(){});
+if(LI[CT])document.querySelectorAll("optgroup").forEach(function(g){var d=OG[g.label];if(d)g.label=d[LI[CT]-1]});
+ct.value=CT;
+ct.onchange=function(){CT=ct.value;try{localStorage.setItem("pf-ct",CT)}catch(e){}if(G[CT])ck("/ro/"+G[CT]);else ck("","; expires=Thu, 01 Jan 1970 00:00:00 GMT");location.reload()};
+if(G[CT]){ck("/ro/"+G[CT]);window.pfGT=function(){new google.translate.TranslateElement({pageLanguage:"ro",includedLanguages:"en,zh-CN,hi,es,fr",autoDisplay:false},"gt")};
+ var sc=document.createElement("script");sc.src="https://translate.google.com/translate_a/element.js?cb=pfGT";document.head.appendChild(sc)}
+})();
+</script><div id="gt" style="display:none"></div></body></html>

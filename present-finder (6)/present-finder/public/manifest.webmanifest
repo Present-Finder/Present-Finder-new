@@ -1,0 +1,19 @@
+{
+  "id": "/presentfinder",
+  "name": "Present Finder – cadoul perfect",
+  "short_name": "Present Finder",
+  "description": "Găsește cadoul perfect în 30 de secunde, cu variante pentru orice buget.",
+  "lang": "ro",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e0826",
+  "theme_color": "#7c4dff",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
